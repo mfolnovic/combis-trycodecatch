@@ -1,20 +1,42 @@
 package hr.combis.explorer.controller.slack;
 
+import edu.stanford.nlp.pipeline.Annotation;
+import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import hr.combis.explorer.model.Location;
+import hr.combis.explorer.service.IImageService;
+import hr.combis.explorer.service.ILocationService;
+import hr.combis.explorer.service.result.ImageResult;
 import me.ramswaroop.jbot.core.slack.Bot;
 import me.ramswaroop.jbot.core.slack.Controller;
 import me.ramswaroop.jbot.core.slack.EventType;
 import me.ramswaroop.jbot.core.slack.models.Event;
+import me.ramswaroop.jbot.core.slack.models.File;
 import me.ramswaroop.jbot.core.slack.models.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketSession;
 
+import javax.imageio.ImageIO;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.util.Properties;
 import java.util.regex.Matcher;
 
 @Component
 public class SlackBot extends Bot {
+    @Value("image-dir-path")
+    private String imageDirPath;
+
+    private IImageService imageService;
+
+    private ILocationService locationService;
+
+    private StanfordCoreNLP pipeline;
 
     private static final Logger logger = LoggerFactory.getLogger(SlackBot.class);
 
@@ -25,6 +47,18 @@ public class SlackBot extends Bot {
     @Value("${slackBotToken}")
     private String slackToken;
 
+    @Autowired
+    public SlackBot(IImageService imageService, ILocationService locationService){
+        this.locationService = locationService;
+        // creates a StanfordCoreNLP object, with POS tagging, lemmatization, NER, parsing, and coreference resolution
+        Properties props = new Properties();
+        props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref");
+        this.pipeline = new StanfordCoreNLP(props);
+        this.imageService = imageService;
+        this.locationService = locationService;
+
+    }
+
     @Override
     public String getSlackToken() {
         return slackToken;
@@ -33,6 +67,37 @@ public class SlackBot extends Bot {
     @Override
     public Bot getSlackBot() {
         return this;
+    }
+
+
+
+    private IBotCommand processMessage(WebSocketSession session, Event event){
+
+        if(event.getFile() != null){
+            processFile(event.getFile());
+        }else if(event.getText() != null) {
+            processText(event.getText());
+        }
+
+        // depending on processed file or text generate bot command for reply
+        return null;
+    }
+
+    private void processText(String text) {
+        // create an empty Annotation just with the given text
+        Annotation document = new Annotation(text);
+
+        // run all Annotators on this text
+        pipeline.annotate(document);
+        System.out.println(document);
+    }
+
+    private void processFile(File file) throws IOException {
+        URL imageUrl = new URL(file.getUrlPrivateDownload());
+        Location location = this.locationService.findByImage(ImageIO.read(imageUrl));
+
+        // save file to dir
+        // save file info to db
     }
 
     /**
@@ -47,12 +112,14 @@ public class SlackBot extends Bot {
     @Controller(events = {EventType.DIRECT_MENTION, EventType.DIRECT_MESSAGE})
     public void onReceiveDM(WebSocketSession session, Event event) {
         System.out.println(event);
+        processMessage(session, event);
         reply(session, event, new Message("Hi, I am " + slackService.getCurrentUser().getName()));
     }
 
 
     @Controller(events = {EventType.MESSAGE})
     public void onReceiveM(WebSocketSession session, Event event) {
+        processMessage(session, event);
         reply(session, event, new Message("Hi, I am " + slackService.getCurrentUser().getName()));
     }
     /**

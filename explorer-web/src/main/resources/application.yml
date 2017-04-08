@@ -14,3 +14,6 @@ rtmUrl: https://slack.com/api/rtm.start?token={token}&simple_latest&no_unreads
 slackBotToken: xoxb-167203214182-iPgstcmcKaT1pHtDwZR7F8AH
 slashCommandToken: X73Fv3Tokenx242CdpEq
 slackIncomingWebhookUrl: https://hooks.slack.com/services/T025DUwebhookurloOYvPiHL7y6
+
+
+image-dir-path: /images/
