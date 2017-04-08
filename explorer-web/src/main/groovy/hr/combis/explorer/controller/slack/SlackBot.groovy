@@ -17,6 +17,7 @@ import me.ramswaroop.jbot.core.slack.EventType
 import me.ramswaroop.jbot.core.slack.models.Event
 import me.ramswaroop.jbot.core.slack.models.File
 import me.ramswaroop.jbot.core.slack.models.Message
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -30,7 +31,6 @@ import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.socket.WebSocketSession
 
-import java.util.logging.Logger
 import java.util.regex.Matcher
 
 @Component

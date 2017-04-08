@@ -17,3 +17,5 @@ slackIncomingWebhookUrl: https://hooks.slack.com/services/T025DUwebhookurloOYvPi
 
 
 image-dir-path: /images/
+
+spring.h2.console.enabled: true
