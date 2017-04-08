@@ -1,5 +1,6 @@
 import React, {Component, PropTypes} from "react";
-import Map, {GoogleApiWrapper, Marker} from 'google-maps-react'
+import Map, {Marker} from 'google-maps-react'
+import HomeIcon from "../static/images/home_scaled.png"
 
 class MapContainer extends Component {
   render() {
@@ -15,7 +16,8 @@ class MapContainer extends Component {
         <Marker
           key="current"
           name={'You\'re here'}
-          position={this.props.currentLocation}/>
+          position={this.props.currentLocation}
+          icon={HomeIcon}/>
       ]
     }
 
@@ -31,9 +33,8 @@ class MapContainer extends Component {
     return (
       <Map google={this.props.google}
            className={'map'}
-           style={{}}
            zoom={14}
-           containerStyle={{width: '450px', height: '450px', position: 'relative'}}
+           containerStyle={{width: '100%', height: '550px', position: 'relative'}}
            centerAroundCurrentLocation={true} >
         {markers}
       </Map>
@@ -46,7 +47,4 @@ MapContainer.propTypes = {
   locations: PropTypes.array.isRequired
 };
 
-export default GoogleApiWrapper({
-  apiKey: "AIzaSyAyesbQMyKVVbBgKVi2g6VX7mop2z96jBo",
-  libraries: ['places','visualization']
-})(MapContainer);
+export default MapContainer;
