@@ -1,6 +1,7 @@
 import React, {PropTypes} from "react";
 import MapContainer from "./MapContainter";
 import LocationList from "./LocationList";
+import RankUserContainer from "../containers/RankUserContainer";
 import {Grid, Row, Col} from "react-bootstrap";
 import {GoogleApiWrapper} from "google-maps-react";
 import Paper from 'material-ui/Paper';
@@ -23,6 +24,10 @@ function LocationsWrapper({currentLocation, locations, google, loaded}) {
         <Col sm={4}>
           <Paper zDepth={1}>
             <LocationList locations={locations}/>
+          </Paper>
+
+          <Paper zDepth={1}>
+            <RankUserContainer />
           </Paper>
         </Col>
       </Row>
