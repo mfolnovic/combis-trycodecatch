@@ -5,7 +5,9 @@ import hr.combis.explorer.dao.ILocationRepository
 import hr.combis.explorer.model.Channel
 import hr.combis.explorer.model.Location
 import hr.combis.explorer.model.User
+import hr.combis.explorer.service.ILocationService
 import hr.combis.explorer.service.IUserService
+import hr.combis.explorer.service.result.ImageResult
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -14,13 +16,13 @@ import javax.annotation.PostConstruct
 @Component
 class InitializeDatabase {
   private IChannelRepository channelRepository
-  private ILocationRepository locationRepository
+  private ILocationService locationService
   private IUserService userService
 
   @Autowired
-  InitializeDatabase(IChannelRepository channelRepository, ILocationRepository locationRepository, IUserService userService) {
+  InitializeDatabase(IChannelRepository channelRepository, ILocationService locationService, IUserService userService) {
     this.channelRepository = channelRepository
-    this.locationRepository = locationRepository
+    this.locationService = locationService
     this.userService = userService
   }
 
@@ -34,7 +36,7 @@ class InitializeDatabase {
     Channel channel2 = new Channel("C4WJTQ7D3", "gornji-grad-test")
     channelRepository.save(channel1)
     channelRepository.save(channel2)
-    locationRepository.save(new Location("Trg bana Jelačića",  "", 45.8129051, 15.9772896, channel1))
-    locationRepository.save(new Location("HNK", "", 45.8096498, 15.9700533, channel2))
+    locationService.createLocation(new ImageResult("Ban Jelačić Square",  45.8129051, 15.9772896), channel1)
+    locationService.createLocation(new ImageResult("Croatian National Theatre", 45.8096498, 15.9700533), channel2)
   }
 }

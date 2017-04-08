@@ -2,6 +2,7 @@ package hr.combis.explorer.service.impl
 
 import hr.combis.explorer.dao.IFactRepository
 import hr.combis.explorer.dao.ILocationRepository
+import hr.combis.explorer.model.Channel
 import hr.combis.explorer.model.Fact
 import hr.combis.explorer.model.Location
 import hr.combis.explorer.service.IImageService
@@ -49,6 +50,11 @@ class LocationService implements ILocationService {
 //    ImageResult result = imageService.searchImage(image)
     ImageResult result = new ImageResult("Ban Jelačić Square", 45.81312381458756, 15.977297)
 
+    return createLocation(result)
+  }
+
+  @Override
+  Location createLocation(ImageResult result, Channel channel = null) {
     if (result == null) {
       return null
     }
@@ -63,7 +69,7 @@ class LocationService implements ILocationService {
 
     def facts = wikipediaService.readFacts(result.name)
 
-    Location forDb = new Location(result.name, summary, result.latitude, result.longitude)
+    Location forDb = new Location(result.name, summary, result.latitude, result.longitude, channel)
     Location savedLocation = locationRepository.save(forDb)
 
     facts.each {
