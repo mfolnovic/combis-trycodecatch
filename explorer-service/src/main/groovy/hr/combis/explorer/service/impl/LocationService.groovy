@@ -4,7 +4,11 @@ import hr.combis.explorer.dao.ILocationRepository
 import hr.combis.explorer.model.Location
 import hr.combis.explorer.service.ILocationService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
 
+import java.util.stream.Collectors
+
+@Service
 class LocationService implements ILocationService {
   final ILocationRepository locationRepository
 
@@ -16,5 +20,15 @@ class LocationService implements ILocationService {
   @Override
   List<Location> findAll() {
     return locationRepository.findAll() as List<Location>
+  }
+
+  @Override
+  List<Location> findNearest(Double latitude, Double longitude, double threshold) {
+    List<Location> locations = locationRepository.findAll() as List<Location>
+    return locations.stream()
+            .filter({
+                it -> Math.sqrt(Math.pow(it.latitude - latitude, 2) + Math.pow(it.longitude - longitude, 2)) < threshold
+            })
+            .collect(Collectors.toList())
   }
 }
