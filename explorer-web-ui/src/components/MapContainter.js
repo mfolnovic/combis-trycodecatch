@@ -1,28 +1,8 @@
-import React, {Component} from "react";
+import React, {Component, PropTypes} from "react";
 import {connect} from "react-redux";
 import Map, {GoogleApiWrapper, Marker} from 'google-maps-react'
 
 class MapContainer extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      currentPosition : null
-    };
-  }
-
-  componentWillMount() {
-    navigator.geolocation.getCurrentPosition(this.onPositionGet);
-  }
-
-  onPositionGet = (position) => {
-    this.setState({
-      currentPosition : {
-        lng: position.coords.longitude,
-        lat: position.coords.latitude
-      }
-    })
-  };
-
   render() {
     if (!this.props.loaded) {
       return <div>Loading...</div>
@@ -30,10 +10,10 @@ class MapContainer extends Component {
 
     let meMarker = "";
 
-    if (this.state.currentPosition) {
+    if (this.props.currentLocation) {
       meMarker = <Marker
         name={'You\'re here'}
-        position={this.state.currentPosition}/>
+        position={this.props.currentLocation}/>
     }
 
     return (
@@ -49,15 +29,12 @@ class MapContainer extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    users: state.users,
-  }
+MapContainer.propTypes = {
+  currentLocation: PropTypes.object.isRequired,
+  locations: PropTypes.array.isRequired
 };
 
-export default connect(
-  mapStateToProps,
-)(GoogleApiWrapper({
+export default GoogleApiWrapper({
   apiKey: "AIzaSyAyesbQMyKVVbBgKVi2g6VX7mop2z96jBo",
   libraries: ['places','visualization']
-})(MapContainer));
+})(MapContainer);
