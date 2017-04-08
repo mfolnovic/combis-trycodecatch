@@ -3,16 +3,23 @@ package hr.combis.explorer.service.impl
 import com.google.cloud.vision.spi.v1.ImageAnnotatorClient
 import com.google.cloud.vision.v1.AnnotateImageRequest
 import com.google.cloud.vision.v1.Feature
-import com.google.cloud.vision.v1.Feature.Type
 import com.google.cloud.vision.v1.Image
 import com.google.protobuf.ByteString
+import hr.combis.explorer.dao.IImageRepository
 import hr.combis.explorer.service.IImageService
 import hr.combis.explorer.service.result.ImageResult
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
 class ImageService implements IImageService {
 //  @Value("${google.vision.api.key}") String apiKey
+  private IImageRepository imageRepository
+
+  @Autowired
+  public ImageService(IImageRepository imageRepository) {
+    this.imageRepository = imageRepository
+  }
 
   @Override
   ImageResult searchImage(byte[] bytes) {
@@ -22,7 +29,7 @@ class ImageService implements IImageService {
 
     def requests = []
     def img = Image.newBuilder().setContent(image).build()
-    def feat1 = Feature.newBuilder().setType(Type.WEB_DETECTION).build()
+    def feat1 = Feature.newBuilder().setType(Feature.Type.WEB_DETECTION).build()
     def feat2 = Feature.newBuilder().setType(Type.LANDMARK_DETECTION).build()
     def request = AnnotateImageRequest.newBuilder()
             .addFeatures(feat1)
@@ -51,5 +58,10 @@ class ImageService implements IImageService {
     }
 
     return new ImageResult(entity, latitude, longitude)
+  }
+
+  @Override
+  hr.combis.explorer.model.Image save(hr.combis.explorer.model.Image image) {
+    return imageRepository.save(image)
   }
 }
