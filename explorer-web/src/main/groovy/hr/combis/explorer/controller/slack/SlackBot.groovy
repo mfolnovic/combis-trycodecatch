@@ -1,4 +1,6 @@
-package hr.combis.explorer.controller.slack;
+package hr.combis.explorer.controller.slack
+
+import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 
 //import edu.stanford.nlp.pipeline.Annotation;
 //import edu.stanford.nlp.pipeline.StanfordCoreNLP;
@@ -40,7 +42,7 @@ public class SlackBot extends Bot {
 
     private ILocationService locationService;
 
-//    private StanfordCoreNLP pipeline;
+    private StanfordCoreNLP pipeline;
 
     private static final Logger logger = LoggerFactory.getLogger(SlackBot.class);
 
@@ -57,7 +59,7 @@ public class SlackBot extends Bot {
         // creates a StanfordCoreNLP object, with POS tagging, lemmatization, NER, parsing, and coreference resolution
         Properties props = new Properties();
         props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref");
-//        this.pipeline = new StanfordCoreNLP(props);
+        this.pipeline = new StanfordCoreNLP(props);
         this.imageService = imageService;
         this.locationService = locationService;
 
