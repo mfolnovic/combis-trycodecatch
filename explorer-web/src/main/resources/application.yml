@@ -8,7 +8,8 @@ spring:
       ddl-auto: validate
     show-sql: true
 
-# slack integrations
+google.vision.api.key: AIzaSyDaE7_gg2YLS5-NuSCEaSXF1CdK63EwARE
+
 rtmUrl: https://slack.com/api/rtm.start?token={token}&simple_latest&no_unreads
 slackBotToken: xoxb-167203214182-iPgstcmcKaT1pHtDwZR7F8AH
 slashCommandToken: X73Fv3Tokenx242CdpEq

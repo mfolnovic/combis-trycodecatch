@@ -26,7 +26,7 @@ class InitializeDatabase {
     Channel channel2 = new Channel("adsf8dsaf7604334", "HNK")
     channelRepository.save(channel1)
     channelRepository.save(channel2)
-    locationRepository.save(new Location("Trg bana Jelačića", 45.8129051, 15.9772896, channel1))
-    locationRepository.save(new Location("HNK", 45.8096498, 15.9700533, channel2))
+    locationRepository.save(new Location("Trg bana Jelačića",  "", 45.8129051, 15.9772896, channel1))
+    locationRepository.save(new Location("HNK", "", 45.8096498, 15.9700533, channel2))
   }
 }

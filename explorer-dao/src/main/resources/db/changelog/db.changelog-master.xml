@@ -45,4 +45,11 @@
 			</column>
 		</addColumn>
 	</changeSet>
+
+	<changeSet id="201704081220-3" author="mfolnovic">
+		<addColumn tableName="location">
+			<column name="summary" type="TEXT" />
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>

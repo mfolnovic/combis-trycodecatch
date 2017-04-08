@@ -4,6 +4,7 @@ import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
+import javax.persistence.Lob
 import javax.persistence.OneToOne
 
 @Entity
@@ -12,6 +13,8 @@ class Location {
   @GeneratedValue(strategy = GenerationType.AUTO)
   Long id
   String name
+  @Lob
+  String summary
   BigDecimal latitude
   BigDecimal longitude
 
@@ -21,14 +24,11 @@ class Location {
   Location(){
   }
 
-  Location(String name, Double latitude, Double longitude, Channel channel) {
+  Location(String name, String summary, BigDecimal latitude = null, BigDecimal longitude = null, Channel channel = null) {
     this.name = name
+    this.summary = summary
     this.latitude = latitude
     this.longitude = longitude
     this.channel = channel
-  }
-
-  Location(String name, Double latitude, Double longitude) {
-    this(name, latitude, longitude, null)
   }
 }
