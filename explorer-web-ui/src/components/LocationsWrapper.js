@@ -7,7 +7,7 @@ import {GoogleApiWrapper} from "google-maps-react";
 import Paper from 'material-ui/Paper';
 import Searchbar from './Searchbar';
 
-function LocationsWrapper({currentLocation, locations, google, loaded}) {
+function LocationsWrapper({currentLocation, locations, google, map, loaded}) {
   return (
     <Grid>
       <Row>

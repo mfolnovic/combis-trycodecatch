@@ -1,4 +1,4 @@
-import {LOAD_NEAR_LOCATIONS_SUCCESS, LOAD_MY_LOCATION} from "../actions/location";
+import {LOAD_NEAR_LOCATIONS_SUCCESS, LOAD_MY_LOCATION, SET_NEW_CENTER} from "../actions/location";
 
 const initState = {
   near: [],
@@ -17,6 +17,12 @@ export function location(state = initState, action) {
       return {
         ...state,
         my: action.payload,
+        center: action.payload
+      };
+    case SET_NEW_CENTER:
+      return {
+        ...state,
+        center: action.payload
       };
     default:
       return state

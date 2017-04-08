@@ -1,7 +1,13 @@
 import React, {Component, PropTypes} from "react";
 import ReactDOM from 'react-dom'
+import {connect} from "react-redux";
+import {setNewCenter} from '../actions/location';
 
 class Searchbar extends Component {
+  constructor(props) {
+    super(props);
+  }
+
   componentDidMount() {
     this.renderAutoComplete();
   }
@@ -17,13 +23,14 @@ class Searchbar extends Component {
     const node = ReactDOM.findDOMNode(aref);
     let autocomplete = new this.props.google.maps.places.Autocomplete(node);
 
+    let me = this;
     autocomplete.addListener('place_changed', () => {
       const place = autocomplete.getPlace();
 
       if (!place.geometry) {
         return;
       }
-      console.log(place.geometry.location.lat());
+      me.props.dispatch(setNewCenter({lat: place.geometry.location.lat(), lng: place.geometry.location.lng()}));
     })
   }
 
@@ -31,9 +38,18 @@ class Searchbar extends Component {
     return (
       <input
         ref='autocomplete'
-        type="text"></input>
+        type="text"
+      />
     );
   }
 }
 
-export default Searchbar;
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    dispatch: dispatch,
+  };
+};
+
+export default connect(
+  mapDispatchToProps
+)(Searchbar);

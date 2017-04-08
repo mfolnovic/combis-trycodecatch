@@ -29,12 +29,12 @@ class MapContainer extends Component {
         )
       ]
     }
-
     return (
       <Map google={this.props.google}
            className={'map'}
            zoom={14}
            containerStyle={{width: '100%', height: '550px', position: 'relative'}}
+           center={this.props.center}
            centerAroundCurrentLocation={true} >
         {markers}
       </Map>
@@ -44,7 +44,8 @@ class MapContainer extends Component {
 
 MapContainer.propTypes = {
   currentLocation: PropTypes.object,
-  locations: PropTypes.array.isRequired
+  locations: PropTypes.array.isRequired,
+  center: PropTypes.object
 };
 
 export default MapContainer;
