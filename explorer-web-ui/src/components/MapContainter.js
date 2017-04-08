@@ -13,6 +13,7 @@ class MapContainer extends Component {
       markers = [
         ...markers,
         <Marker
+          key="current"
           name={'You\'re here'}
           position={this.props.currentLocation}/>
       ]
