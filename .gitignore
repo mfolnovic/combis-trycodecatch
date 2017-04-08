@@ -20,17 +20,17 @@ target
 *.ipr
 
 # dependencies
-team-three-web-ui/node_modules
+explorer-web-ui/node_modules
 
 # testing
-team-three-web-ui/coverage
+explorer-web-ui/coverage
 
 # production
-team-three-web-ui/build
+explorer-web-ui/build
 
 # misc
-team-three-web-ui/.DS_Store
-team-three-web-ui/.env
-team-three-web-ui/npm-debug.log*
-team-three-web-ui/yarn-debug.log*
-team-three-web-ui/yarn-error.log*
+explorer-web-ui/.DS_Store
+explorer-web-ui/.env
+explorer-web-ui/npm-debug.log*
+explorer-web-ui/yarn-debug.log*
+explorer-web-ui/yarn-error.log*

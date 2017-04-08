@@ -3,13 +3,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>hr.combis.teamthree</groupId>
-    <artifactId>team-three</artifactId>
+    <groupId>hr.combis.explorer</groupId>
+    <artifactId>explorer</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>Team Three - Parent</name>
-    <description>Combis try{code}catch - Team Three - Parent</description>
+    <name>Explorer - Parent</name>
+    <description>Combis try{code}catch - Explorer - Parent</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -25,35 +25,35 @@
     </properties>
 
     <modules>
-        <module>team-three-model</module>
-        <module>team-three-dao</module>
-        <module>team-three-service</module>
-        <module>team-three-web</module>
+        <module>explorer-model</module>
+        <module>explorer-dao</module>
+        <module>explorer-service</module>
+        <module>explorer-web</module>
     </modules>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>hr.combis.teamthree</groupId>
-                <artifactId>team-three-model</artifactId>
+                <groupId>hr.combis.explorer</groupId>
+                <artifactId>explorer-model</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>hr.combis.teamthree</groupId>
-                <artifactId>team-three-dao</artifactId>
+                <groupId>hr.combis.explorer</groupId>
+                <artifactId>explorer-dao</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>hr.combis.teamthree</groupId>
-                <artifactId>team-three-service</artifactId>
+                <groupId>hr.combis.explorer</groupId>
+                <artifactId>explorer-service</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>hr.combis.teamthree</groupId>
-                <artifactId>team-three-web</artifactId>
+                <groupId>hr.combis.explorer</groupId>
+                <artifactId>explorer-web</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
