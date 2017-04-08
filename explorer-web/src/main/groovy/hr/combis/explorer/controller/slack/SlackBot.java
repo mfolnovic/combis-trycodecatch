@@ -105,7 +105,7 @@ public class SlackBot extends Bot {
             for (CoreLabel token: sentence.get(CoreAnnotations.TokensAnnotation.class)) {
                 // Retrieve and add the lemma for each word into the
                 // list of lemmas
-                String token1 = token.toString();
+                String token1 = token.originalText();
                 String lemma = token.get(CoreAnnotations.LemmaAnnotation.class);
                 String ner = token.get(CoreAnnotations.NERIDAnnotation.class);
                 String pos = token.get(CoreAnnotations.PartOfSpeechAnnotation.class);
