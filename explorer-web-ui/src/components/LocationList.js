@@ -5,14 +5,14 @@ function LocationList({locations}) {
   return (
     <div>
       {locations.map(location =>
-        <Location key={location.name} user={location}/>
+        <Location key={location.name} location={location}/>
       )}
     </div>
   );
 }
 
 LocationList.propTypes = {
-  users: PropTypes.array.isRequired,
+  locations: PropTypes.array.isRequired,
 };
 
 export default LocationList;
