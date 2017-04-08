@@ -53,12 +53,17 @@
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/edu.stanford.nlp/stanford-corenlp -->
-		<dependency>
-			<groupId>edu.stanford.nlp</groupId>
-			<artifactId>stanford-corenlp</artifactId>
-			<version>3.7.0</version>
-			<classifier>models</classifier>
-		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>edu.stanford.nlp</groupId>-->
+			<!--<artifactId>stanford-corenlp</artifactId>-->
+			<!--<version>3.7.0</version>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>edu.stanford.nlp</groupId>-->
+			<!--<artifactId>stanford-corenlp</artifactId>-->
+			<!--<version>3.7.0</version>-->
+			<!--<classifier>models</classifier>-->
+		<!--</dependency>-->
 
 
 		<dependency>
@@ -67,4 +72,13 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
 </project>

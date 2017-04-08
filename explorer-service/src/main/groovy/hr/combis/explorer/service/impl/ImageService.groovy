@@ -11,6 +11,9 @@ import hr.combis.explorer.service.result.ImageResult
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
+import java.nio.file.Files
+import java.nio.file.Paths
+
 @Service
 class ImageService implements IImageService {
 //  @Value("${google.vision.api.key}") String apiKey
@@ -30,7 +33,7 @@ class ImageService implements IImageService {
     def requests = []
     def img = Image.newBuilder().setContent(image).build()
     def feat1 = Feature.newBuilder().setType(Feature.Type.WEB_DETECTION).build()
-    def feat2 = Feature.newBuilder().setType(Type.LANDMARK_DETECTION).build()
+    def feat2 = Feature.newBuilder().setType(Feature.Type.LANDMARK_DETECTION).build()
     def request = AnnotateImageRequest.newBuilder()
             .addFeatures(feat1)
             .addFeatures(feat2)

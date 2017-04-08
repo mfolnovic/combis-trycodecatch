@@ -1,7 +1,7 @@
 package hr.combis.explorer.controller.slack;
 
-import edu.stanford.nlp.pipeline.Annotation;
-import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+//import edu.stanford.nlp.pipeline.Annotation;
+//import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import hr.combis.explorer.model.Location;
 import hr.combis.explorer.service.IImageService;
 import hr.combis.explorer.service.ILocationService;
@@ -16,7 +16,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
+import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.socket.WebSocketSession;
 
 import javax.imageio.ImageIO;
@@ -24,6 +27,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.Properties;
 import java.util.regex.Matcher;
 
@@ -36,7 +40,7 @@ public class SlackBot extends Bot {
 
     private ILocationService locationService;
 
-    private StanfordCoreNLP pipeline;
+//    private StanfordCoreNLP pipeline;
 
     private static final Logger logger = LoggerFactory.getLogger(SlackBot.class);
 
@@ -44,7 +48,7 @@ public class SlackBot extends Bot {
      * Slack token from application.properties file. You can get your slack token
      * next <a href="https://my.slack.com/services/new/bot">creating a new bot</a>.
      */
-    @Value("${slackBotToken}")
+    @Value("\${slackBotToken}")
     private String slackToken;
 
     @Autowired
@@ -53,7 +57,7 @@ public class SlackBot extends Bot {
         // creates a StanfordCoreNLP object, with POS tagging, lemmatization, NER, parsing, and coreference resolution
         Properties props = new Properties();
         props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref");
-        this.pipeline = new StanfordCoreNLP(props);
+//        this.pipeline = new StanfordCoreNLP(props);
         this.imageService = imageService;
         this.locationService = locationService;
 
@@ -74,7 +78,8 @@ public class SlackBot extends Bot {
     private IBotCommand processMessage(WebSocketSession session, Event event){
 
         if(event.getFile() != null){
-            processFile(event.getFile());
+            Location location = processFile(event.getFile());
+            reply(session, event, new Message(location.summary));
         }else if(event.getText() != null) {
             processText(event.getText());
         }
@@ -85,19 +90,28 @@ public class SlackBot extends Bot {
 
     private void processText(String text) {
         // create an empty Annotation just with the given text
-        Annotation document = new Annotation(text);
+//        Annotation document = new Annotation(text);
 
         // run all Annotators on this text
-        pipeline.annotate(document);
-        System.out.println(document);
+//        pipeline.annotate(document);
+//        System.out.println(document);
     }
 
-    private void processFile(File file) throws IOException {
-        URL imageUrl = new URL(file.getUrlPrivateDownload());
-        Location location = this.locationService.findByImage(ImageIO.read(imageUrl));
+    private Location processFile(File file) {
+        String url = file.getUrlPrivateDownload();
 
-        // save file to dir
-        // save file info to db
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.getMessageConverters().add(new ByteArrayHttpMessageConverter());
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM));
+        headers.add("Authorization", String.format("Bearer %s", slackToken));
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<byte[]> response = restTemplate.exchange(url, HttpMethod.GET, entity, byte[].class, "1");
+
+        byte[] body = response.getBody();
+
+        return locationService.findByImage(body)
     }
 
     /**
@@ -109,18 +123,18 @@ public class SlackBot extends Bot {
      * @param session
      * @param event
      */
-    @Controller(events = {EventType.DIRECT_MENTION, EventType.DIRECT_MESSAGE})
+    @Controller(events = [EventType.DIRECT_MENTION, EventType.DIRECT_MESSAGE])
     public void onReceiveDM(WebSocketSession session, Event event) {
         System.out.println(event);
         processMessage(session, event);
-        reply(session, event, new Message("Hi, I am " + slackService.getCurrentUser().getName()));
+//        reply(session, event, new Message("Hi, I am " + slackService.getCurrentUser().getName()));
     }
 
 
-    @Controller(events = {EventType.MESSAGE})
+    @Controller(events = [EventType.MESSAGE])
     public void onReceiveM(WebSocketSession session, Event event) {
         processMessage(session, event);
-        reply(session, event, new Message("Hi, I am " + slackService.getCurrentUser().getName()));
+//        reply(session, event, new Message("Hi, I am " + slackService.getCurrentUser().getName()));
     }
     /**
      * Invoked when bot receives an event of type message with text satisfying
@@ -130,7 +144,7 @@ public class SlackBot extends Bot {
      * @param session
      * @param event
      */
-    @Controller(events = EventType.MESSAGE, pattern = "^([a-z ]{2})(\\d+)([a-z ]{2})$")
+    @Controller(events = EventType.MESSAGE, pattern = "^([a-z ]{2})(\\d+)([a-z ]{2})\$")
     public void onReceiveMessage(WebSocketSession session, Event event, Matcher matcher) {
         reply(session, event, new Message("First group: " + matcher.group(0) + "\n" +
                 "Second group: " + matcher.group(1) + "\n" +
