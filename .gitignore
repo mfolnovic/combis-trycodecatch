@@ -1,0 +1,36 @@
+*.class
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+target
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+# dependencies
+team-three-web-ui/node_modules
+
+# testing
+team-three-web-ui/coverage
+
+# production
+team-three-web-ui/build
+
+# misc
+team-three-web-ui/.DS_Store
+team-three-web-ui/.env
+team-three-web-ui/npm-debug.log*
+team-three-web-ui/yarn-debug.log*
+team-three-web-ui/yarn-error.log*
