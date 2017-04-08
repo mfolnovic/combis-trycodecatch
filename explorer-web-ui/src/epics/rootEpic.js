@@ -1,6 +1,6 @@
 import {combineEpics} from "redux-observable";
-import {loadNearLocationsEpic} from './location';
+import {locationEpic} from './location';
 
 export const rootEpic = combineEpics(
-  loadNearLocationsEpic
+  locationEpic,
 );
