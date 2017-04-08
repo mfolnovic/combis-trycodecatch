@@ -8,7 +8,7 @@ function Location({location}) {
       primaryText={location.name}
       secondaryText={location.channel.name}
       rightIcon={<Icon name="slack"/>}
-      onTouchTap={() => window.location.href = "https://trycodecatch-explorer.slack.com/messages/" + location.channel.slackId +"/"}
+      onTouchTap={() => window.open("https://trycodecatch-explorer.slack.com/messages/" + location.channel.slack_id +"/")}
       />
   );
 }
