@@ -66,4 +66,18 @@
 			<column name="sentence" type="TEXT" />
 		</createTable>
 	</changeSet>
+	<changeSet id="201704081137-5" author="mfolnovic">
+		<createTable tableName="user">
+			<column name="id" type="BIGINT" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="uid" type="VARCHAR(1024)">
+				<constraints unique="true"/>
+			</column>
+			<column name="username" type="VARCHAR(1024)">
+				<constraints unique="true"/>
+			</column>
+			<column name="uploaded_photos" type="INTEGER"/>
+		</createTable>
+	</changeSet>
 </databaseChangeLog>
