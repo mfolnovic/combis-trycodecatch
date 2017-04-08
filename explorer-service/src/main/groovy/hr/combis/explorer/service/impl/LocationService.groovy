@@ -10,8 +10,6 @@ import java.util.stream.Collectors
 
 @Service
 class LocationService implements ILocationService {
-  final static double NEAR_THRESHOLD = 20
-
   final ILocationRepository locationRepository
 
   @Autowired
@@ -32,10 +30,5 @@ class LocationService implements ILocationService {
                 it -> Math.sqrt(Math.pow(it.latitude - latitude, 2) + Math.pow(it.longitude - longitude, 2)) < threshold
             })
             .collect(Collectors.toList())
-  }
-
-  @Override
-  List<Location> findNearest(Double latitude, Double longitude) {
-    return findNearest(latitude, longitude, NEAR_THRESHOLD)
   }
 }
