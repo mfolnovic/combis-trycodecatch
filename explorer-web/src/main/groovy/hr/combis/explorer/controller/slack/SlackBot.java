@@ -1,7 +1,13 @@
 package hr.combis.explorer.controller.slack;
 
+import edu.stanford.nlp.ling.CoreAnnotations;
+import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import edu.stanford.nlp.util.CoreMap;
+import hr.combis.explorer.controller.slack.nlpUtils.Document;
+import hr.combis.explorer.controller.slack.nlpUtils.Sentence;
+import hr.combis.explorer.controller.slack.nlpUtils.Word;
 import hr.combis.explorer.model.Location;
 import hr.combis.explorer.service.IImageService;
 import hr.combis.explorer.service.ILocationService;
@@ -19,11 +25,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketSession;
 
-import javax.imageio.ImageIO;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.file.Files;
+import java.util.List;
 import java.util.Properties;
 import java.util.regex.Matcher;
 
@@ -52,6 +55,7 @@ public class SlackBot extends Bot {
         this.locationService = locationService;
         // creates a StanfordCoreNLP object, with POS tagging, lemmatization, NER, parsing, and coreference resolution
         Properties props = new Properties();
+
         props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref");
         this.pipeline = new StanfordCoreNLP(props);
         this.imageService = imageService;
@@ -71,30 +75,51 @@ public class SlackBot extends Bot {
 
 
 
-    private IBotCommand processMessage(WebSocketSession session, Event event){
-
+    private IBotCommand processMessage(WebSocketSession session, Event event) throws IOException {
         if(event.getFile() != null){
             processFile(event.getFile());
         }else if(event.getText() != null) {
             processText(event.getText());
         }
-
         // depending on processed file or text generate bot command for reply
         return null;
     }
 
     private void processText(String text) {
         // create an empty Annotation just with the given text
+        Document document = preprocessDocument(text);
+
+    }
+
+    private Document preprocessDocument(String text) {
         Annotation document = new Annotation(text);
 
         // run all Annotators on this text
         pipeline.annotate(document);
-        System.out.println(document);
+
+        List<CoreMap> sentences = document.get(CoreAnnotations.SentencesAnnotation.class);
+        Document doc = new Document();
+        for(CoreMap sentence: sentences) {
+            Sentence sen = new Sentence();
+            // Iterate over all tokens in a sentence
+            for (CoreLabel token: sentence.get(CoreAnnotations.TokensAnnotation.class)) {
+                // Retrieve and add the lemma for each word into the
+                // list of lemmas
+                String token1 = token.toString();
+                String lemma = token.get(CoreAnnotations.LemmaAnnotation.class);
+                String ner = token.get(CoreAnnotations.NERIDAnnotation.class);
+                String pos = token.get(CoreAnnotations.PartOfSpeechAnnotation.class);
+                Word word = new Word(token1, pos, lemma, ner);
+                sen.addWord(word);
+            }
+            doc.addSentence(sen);
+        }
+        return doc;
     }
 
     private void processFile(File file) throws IOException {
-        URL imageUrl = new URL(file.getUrlPrivateDownload());
-        Location location = this.locationService.findByImage(ImageIO.read(imageUrl));
+//        URL imageUrl = new URL(file.getUrlPrivateDownload());
+//        Location location = this.locationService.findByImage(ImageIO.read(imageUrl));
 
         // save file to dir
         // save file info to db
@@ -111,15 +136,22 @@ public class SlackBot extends Bot {
      */
     @Controller(events = {EventType.DIRECT_MENTION, EventType.DIRECT_MESSAGE})
     public void onReceiveDM(WebSocketSession session, Event event) {
-        System.out.println(event);
-        processMessage(session, event);
+        try {
+            processMessage(session, event);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         reply(session, event, new Message("Hi, I am " + slackService.getCurrentUser().getName()));
     }
 
 
     @Controller(events = {EventType.MESSAGE})
     public void onReceiveM(WebSocketSession session, Event event) {
-        processMessage(session, event);
+        try {
+            processMessage(session, event);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         reply(session, event, new Message("Hi, I am " + slackService.getCurrentUser().getName()));
     }
     /**
@@ -130,7 +162,7 @@ public class SlackBot extends Bot {
      * @param session
      * @param event
      */
-    @Controller(events = EventType.MESSAGE, pattern = "^([a-z ]{2})(\\d+)([a-z ]{2})$")
+//    @Controller(events = EventType.MESSAGE, pattern = "^([a-z ]{2})(\\d+)([a-z ]{2})$")
     public void onReceiveMessage(WebSocketSession session, Event event, Matcher matcher) {
         reply(session, event, new Message("First group: " + matcher.group(0) + "\n" +
                 "Second group: " + matcher.group(1) + "\n" +
@@ -144,7 +176,7 @@ public class SlackBot extends Bot {
      * @param session
      * @param event
      */
-    @Controller(events = EventType.PIN_ADDED)
+//    @Controller(events = EventType.PIN_ADDED)
     public void onPinAdded(WebSocketSession session, Event event) {
         reply(session, event, new Message("Thanks for the pin! You can find all pinned items under channel details."));
     }
@@ -159,7 +191,7 @@ public class SlackBot extends Bot {
      * @param session
      * @param event
      */
-    @Controller(events = EventType.FILE_SHARED)
+//    @Controller(events = EventType.FILE_SHARED)
     public void onFileShared(WebSocketSession session, Event event) {
         logger.info("File shared: {}", event);
     }
@@ -174,7 +206,7 @@ public class SlackBot extends Bot {
      * @param session
      * @param event
      */
-    @Controller(pattern = "(setup meeting)", next = "confirmTiming")
+//    @Controller(pattern = "(setup meeting)", next = "confirmTiming")
     public void setupMeeting(WebSocketSession session, Event event) {
         startConversation(event, "confirmTiming");   // start conversation
         reply(session, event, new Message("Cool! At what time (ex. 15:30) do you want me to set up the meeting?"));
@@ -186,7 +218,7 @@ public class SlackBot extends Bot {
      * @param session
      * @param event
      */
-    @Controller(next = "askTimeForMeeting")
+//    @Controller(next = "askTimeForMeeting")
     public void confirmTiming(WebSocketSession session, Event event) {
         reply(session, event, new Message("Your meeting is set at " + event.getText() +
                 ". Would you like to repeat it tomorrow?"));
@@ -199,7 +231,7 @@ public class SlackBot extends Bot {
      * @param session
      * @param event
      */
-    @Controller(next = "askWhetherToRepeat")
+//    @Controller(next = "askWhetherToRepeat")
     public void askTimeForMeeting(WebSocketSession session, Event event) {
         if (event.getText().contains("yes")) {
             reply(session, event, new Message("Okay. Would you like me to set a reminder for you?"));
@@ -216,7 +248,7 @@ public class SlackBot extends Bot {
      * @param session
      * @param event
      */
-    @Controller
+//    @Controller
     public void askWhetherToRepeat(WebSocketSession session, Event event) {
         if (event.getText().contains("yes")) {
             reply(session, event, new Message("Great! I will remind you tomorrow before the meeting."));
