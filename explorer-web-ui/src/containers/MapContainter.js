@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import {connect} from "react-redux";
 import Map, {GoogleApiWrapper, Marker} from 'google-maps-react'
 
 class MapContainer extends Component {
@@ -48,7 +49,15 @@ class MapContainer extends Component {
   }
 }
 
-export default GoogleApiWrapper({
+const mapStateToProps = (state) => {
+  return {
+    users: state.users,
+  }
+};
+
+export default connect(
+  mapStateToProps,
+)(GoogleApiWrapper({
   apiKey: "AIzaSyAyesbQMyKVVbBgKVi2g6VX7mop2z96jBo",
   libraries: ['places','visualization']
-})(MapContainer);
+})(MapContainer));
