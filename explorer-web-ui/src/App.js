@@ -2,7 +2,6 @@ import React, {Component} from "react";
 import "./App.css";
 import {Provider} from "react-redux";
 import {createInitStore} from "./store/store";
-import MapContainer from "./containers/MapContainter";
 import NearLocationsContainer from "./containers/NearLocationsContainer";
 import MyLocationContainer from "./containers/MyLocationContainer";
 
