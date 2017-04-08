@@ -17,7 +17,13 @@ class User {
 
   int uploadedPhotos = 0
 
+  int totalScore = 0
+
+  User() {
+  }
+
   User(String uid, String username) {
+    this.uid = uid
     this.username = username
   }
 }

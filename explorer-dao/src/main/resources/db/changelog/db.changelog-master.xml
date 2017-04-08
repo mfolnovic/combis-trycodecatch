@@ -78,6 +78,7 @@
 				<constraints unique="true"/>
 			</column>
 			<column name="uploaded_photos" type="INTEGER"/>
+			<column name="total_score" type="INTEGER"/>
 		</createTable>
 	</changeSet>
 </databaseChangeLog>

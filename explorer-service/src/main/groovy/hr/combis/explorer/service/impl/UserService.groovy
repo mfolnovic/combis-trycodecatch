@@ -8,10 +8,14 @@ import hr.combis.explorer.service.result.SlackUser
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
+import java.util.concurrent.locks.ReentrantLock
+
 @Service
 class UserService implements IUserService {
   private ISlackService slackService
   private IUserRepository userRepository
+
+  private ReentrantLock lock = new ReentrantLock()
 
   @Autowired
   UserService(ISlackService slackService, IUserRepository userRepository) {
@@ -29,5 +33,21 @@ class UserService implements IUserService {
 
     SlackUser slackUser = slackService.fetchUser(uid)
     return userRepository.save(new User(uid, slackUser.username))
+  }
+
+  @Override
+  void increaseUploadedPhotos(User user) {
+    lock.lock()
+
+    User reloaded = userRepository.findOne(user.id)
+    reloaded.uploadedPhotos += 1
+    reloaded.totalScore = recalculatePoints(reloaded)
+    userRepository.save(reloaded)
+
+    lock.unlock()
+  }
+
+  private int recalculatePoints(User user) {
+    return user.uploadedPhotos * 100
   }
 }

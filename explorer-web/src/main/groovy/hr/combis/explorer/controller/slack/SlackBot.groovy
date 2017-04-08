@@ -10,9 +10,11 @@ import hr.combis.explorer.controller.slack.nlpUtils.Sentence
 import hr.combis.explorer.controller.slack.nlpUtils.Word
 import hr.combis.explorer.model.Fact
 import hr.combis.explorer.model.Location
+import hr.combis.explorer.model.User
 import hr.combis.explorer.service.IFactService
 import hr.combis.explorer.service.IImageService
 import hr.combis.explorer.service.ILocationService
+import hr.combis.explorer.service.IUserService
 import me.ramswaroop.jbot.core.slack.Bot
 import me.ramswaroop.jbot.core.slack.Controller
 import me.ramswaroop.jbot.core.slack.EventType
@@ -46,6 +48,8 @@ public class SlackBot extends Bot {
 
     private ILocationService locationService
 
+    private IUserService userService
+
     private IFactService factService
 
     private StanfordCoreNLP pipeline
@@ -64,7 +68,7 @@ public class SlackBot extends Bot {
     private Double startTimestamp
 
     @Autowired
-    public SlackBot(IImageService imageService, ILocationService locationService, IFactService factService){
+    public SlackBot(IImageService imageService, ILocationService locationService, IUserService userService, IFactService factService){
         // creates a StanfordCoreNLP object, with POS tagging, lemmatization, NER, parsing, and coreference resolution
         Properties props = new Properties()
         props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref")
@@ -73,6 +77,7 @@ public class SlackBot extends Bot {
         this.startTimestamp = new Double(System.currentTimeMillis()/1000)
         this.pipeline = new StanfordCoreNLP(props)
         this.imageService = imageService
+        this.userService = userService
         this.locationService = locationService
         this.factService = factService
     }
@@ -94,8 +99,12 @@ public class SlackBot extends Bot {
         if (eventTS < this.startTimestamp){
             return
         }
+
+        User user = userService.findByUid(event.userId)
+
         if(event.getFile() != null){
             Location location = processFile(event.getFile())
+            userService.increaseUploadedPhotos(user)
             this.userLocations.put(event.getUserId(), location)
             reply(session, event, new Message(location.summary))
         }else if(event.getText() != null) {
