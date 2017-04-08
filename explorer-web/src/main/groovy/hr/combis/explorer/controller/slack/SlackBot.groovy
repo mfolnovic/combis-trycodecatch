@@ -8,7 +8,9 @@ import edu.stanford.nlp.util.CoreMap
 import hr.combis.explorer.controller.slack.nlpUtils.Document
 import hr.combis.explorer.controller.slack.nlpUtils.Sentence
 import hr.combis.explorer.controller.slack.nlpUtils.Word
+import hr.combis.explorer.model.Fact
 import hr.combis.explorer.model.Location
+import hr.combis.explorer.service.IFactService
 import hr.combis.explorer.service.IImageService
 import hr.combis.explorer.service.ILocationService
 import me.ramswaroop.jbot.core.slack.Bot
@@ -17,6 +19,7 @@ import me.ramswaroop.jbot.core.slack.EventType
 import me.ramswaroop.jbot.core.slack.models.Event
 import me.ramswaroop.jbot.core.slack.models.File
 import me.ramswaroop.jbot.core.slack.models.Message
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -30,7 +33,8 @@ import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.socket.WebSocketSession
 
-import java.util.logging.Logger
+import javax.print.Doc
+import java.time.LocalDateTime
 import java.util.regex.Matcher
 
 @Component
@@ -42,7 +46,11 @@ public class SlackBot extends Bot {
 
     private ILocationService locationService
 
+    private IFactService factService
+
     private StanfordCoreNLP pipeline
+
+    private HashMap<String, Location> userLocations
 
     private static final Logger logger = LoggerFactory.getLogger(SlackBot.class)
 
@@ -53,17 +61,20 @@ public class SlackBot extends Bot {
     @Value("\${slackBotToken}")
     private String slackToken
 
+    private Double startTimestamp
+
     @Autowired
-    public SlackBot(IImageService imageService, ILocationService locationService){
-        this.locationService = locationService
+    public SlackBot(IImageService imageService, ILocationService locationService, IFactService factService){
         // creates a StanfordCoreNLP object, with POS tagging, lemmatization, NER, parsing, and coreference resolution
         Properties props = new Properties()
-
         props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref")
+
+        this.userLocations = new HashMap<>()
+        this.startTimestamp = new Double(System.currentTimeMillis()/1000)
         this.pipeline = new StanfordCoreNLP(props)
         this.imageService = imageService
         this.locationService = locationService
-
+        this.factService = factService
     }
 
     @Override
@@ -77,21 +88,72 @@ public class SlackBot extends Bot {
     }
 
 
-    private IBotCommand processMessage(WebSocketSession session, Event event) throws IOException {
+    private void processMessage(WebSocketSession session, Event event) throws IOException {
+        Double eventTS = Double.parseDouble(event.getTs())
+
+        if (eventTS < this.startTimestamp){
+            return
+        }
         if(event.getFile() != null){
             Location location = processFile(event.getFile())
+            this.userLocations.put(event.getUserId(), location)
             reply(session, event, new Message(location.summary))
         }else if(event.getText() != null) {
-            processText(event.getText())
+            Location location = this.userLocations.getOrDefault(event.getUserId(), null)
+            if (location == null){
+                String userId = event.getUserId()
+                reply(session, event, new Message("<@all> Can anyone answer <@"+userId+">'s question?"))
+            }else{
+                Map<Fact, Double> rankings = new HashMap<>()
+                List<Fact> facts1 = factService.findAll()
+
+                List<Fact> facts = factService.findForLocation(location)
+                for(Fact fact : facts){
+                    rankings.put(fact, getRanking(fact.sentence, event.getText()))
+                }
+
+                String fact = getBestFact(rankings)
+                // vraca odgovor iz cinjenica
+                reply(session, event, new Message(fact))
+            }
         }
-        // depending on processed file or text generate bot command for reply
-        return null
+
     }
 
-    private void processText(String text) {
-        // create an empty Annotation just with the given text
-        Document document = preprocessDocument(text)
+    private String getBestFact(HashMap<Fact, Double> facts) {
+        Map.Entry<Fact, Double> maxEntry = null;
 
+        for (Map.Entry<Fact, Double> entry : facts.entrySet()) {
+            if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0) {
+                maxEntry = entry
+            }
+        }
+        return maxEntry.getKey().sentence
+    }
+
+    private Double getRanking(String fact, String query) {
+        Document factDoc = preprocessDocument(fact)
+        if (factDoc.size() != 1){
+            return 0
+        }
+        Document queryDoc = preprocessDocument(query)
+        return getFactSimilarity(factDoc.getSentence(0), queryDoc)
+    }
+
+    private Double getFactSimilarity(Sentence fact, Document queryDoc) {
+        double score = 0
+        for (Sentence sentence: queryDoc.getSentences()){
+            score += getSimilarity(fact, sentence)
+        }
+        return score
+    }
+
+    private Double getSimilarity(Sentence fact, Sentence query) {
+        double score = 0
+        for (Word word: query.getWords()){
+            score += fact.wordScore(word)
+        }
+        return score
     }
 
     private Document preprocessDocument(String text) {
@@ -153,7 +215,6 @@ public class SlackBot extends Bot {
         } catch (IOException e) {
             e.printStackTrace()
         }
-        reply(session, event, new Message("Hi, I am " + slackService.getCurrentUser().getName()))
     }
 
 
@@ -164,7 +225,6 @@ public class SlackBot extends Bot {
         } catch (IOException e) {
             e.printStackTrace()
         }
-        reply(session, event, new Message("Hi, I am " + slackService.getCurrentUser().getName()))
     }
     /**
      * Invoked when bot receives an event of type message with text satisfying

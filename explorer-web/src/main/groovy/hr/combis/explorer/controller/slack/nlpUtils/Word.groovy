@@ -28,4 +28,15 @@ public class Word {
     public String getNer() {
         return ner;
     }
+
+    double getSimilarity(Word word) {
+        double score = 0
+        if (word.lemma == this.lemma){
+            score += 1
+        }
+        if (word.token == this.token){
+            score += 0.5
+        }
+        return score
+    }
 }
