@@ -18,7 +18,7 @@ class FactService implements IFactService {
 
     @Override
     List<Fact> findForLocation(Location location) {
-        return this.factRepository.findByLocation(location.id)
+        return this.factRepository.findByLocation(location)
     }
 
     @Override

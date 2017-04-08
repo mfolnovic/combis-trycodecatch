@@ -105,7 +105,6 @@ public class SlackBot extends Bot {
                 reply(session, event, new Message("<@all> Can anyone answer <@"+userId+">'s question?"))
             }else{
                 Map<Fact, Double> rankings = new HashMap<>()
-                List<Fact> facts1 = factService.findAll()
 
                 List<Fact> facts = factService.findForLocation(location)
                 for(Fact fact : facts){
