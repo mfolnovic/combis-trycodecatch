@@ -42,7 +42,8 @@ class LocationService implements ILocationService {
 
   @Override
   Location findByImage(byte[] image) {
-    ImageResult result = imageService.searchImage(image)
+//    ImageResult result = imageService.searchImage(image)
+    ImageResult result = new ImageResult("Ban Jelačić Square", 45.81312381458756, 15.977297)
 
     if (result == null) {
       return null
