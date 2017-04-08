@@ -24,4 +24,21 @@ class Fact {
     this.sentence = sentence
     this.location = location
   }
+
+  @Override
+  int hashCode() {
+    return this.id
+  }
+
+  @Override
+  boolean equals(o) {
+    if (this.is(o)) return true
+    if (getClass() != o.class) return false
+
+    Fact fact = (Fact) o
+
+    if (id != fact.id) return false
+
+    return true
+  }
 }
