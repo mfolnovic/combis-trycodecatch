@@ -1,11 +1,13 @@
 package hr.combis.explorer.service.impl
 
 import hr.combis.explorer.service.IWikipediaService
+import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.xpath.XPathFactory
 
+@Service
 class WikipediaService implements IWikipediaService {
   final URL_FORMAT = "https://en.wikipedia.org/w/api.php?action=query&prop=extracts&format=xml&exintro=&titles=%s"
 

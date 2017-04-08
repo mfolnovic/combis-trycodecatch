@@ -5,3 +5,5 @@ spring:
     hibernate:
       ddl-auto: validate
     show-sql: true
+
+google.vision.api.key: AIzaSyDaE7_gg2YLS5-NuSCEaSXF1CdK63EwARE
