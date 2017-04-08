@@ -63,6 +63,27 @@
                 <artifactId>google-cloud-vision</artifactId>
                 <version>${google-cloud-vision.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>me.ramswaroop.jbot</groupId>
+                <artifactId>jbot</artifactId>
+                <version>3.0.2</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/edu.stanford.nlp/stanford-corenlp -->
+            <dependency>
+                <groupId>edu.stanford.nlp</groupId>
+                <artifactId>stanford-corenlp</artifactId>
+                <version>3.7.0</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/edu.stanford.nlp/stanford-corenlp -->
+            <dependency>
+                <groupId>edu.stanford.nlp</groupId>
+                <artifactId>stanford-corenlp</artifactId>
+                <version>3.7.0</version>
+                <classifier>models</classifier>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

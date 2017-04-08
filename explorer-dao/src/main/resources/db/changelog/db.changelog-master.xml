@@ -52,4 +52,18 @@
 		</addColumn>
 	</changeSet>
 
+	<changeSet id="201704081740-4" author="smikulic">
+		<createTable tableName="fact">
+			<column name="id" type="BIGINT" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="location_id" type="BIGINT">
+			<constraints nullable="false"
+						 foreignKeyName="fk_fact_location"
+						 referencedTableName="location"
+						 referencedColumnNames="id" />
+			</column>
+			<column name="sentence" type="TEXT" />
+		</createTable>
+	</changeSet>
 </databaseChangeLog>
