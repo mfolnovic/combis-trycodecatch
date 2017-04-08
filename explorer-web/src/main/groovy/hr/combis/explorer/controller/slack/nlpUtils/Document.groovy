@@ -21,7 +21,7 @@ public class Document {
 
     public Sentence getSentence(int index){
         if (index < sentences.size()){
-            this.sentences.get(index)
+            return this.sentences.get(index)
         }
         return null
     }

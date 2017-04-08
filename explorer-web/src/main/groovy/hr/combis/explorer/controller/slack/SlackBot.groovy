@@ -58,6 +58,8 @@ public class SlackBot extends Bot {
 
     private static final Logger logger = LoggerFactory.getLogger(SlackBot.class)
 
+    private List<String> stopWords = []
+
     /**
      * Slack token from application.properties file. You can get your slack token
      * next <a href="https://my.slack.com/services/new/bot">creating a new bot</a>.
@@ -71,7 +73,7 @@ public class SlackBot extends Bot {
     public SlackBot(IImageService imageService, ILocationService locationService, IUserService userService, IFactService factService){
         // creates a StanfordCoreNLP object, with POS tagging, lemmatization, NER, parsing, and coreference resolution
         Properties props = new Properties()
-        props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner")
+        props.setProperty("annotators", "tokenize, ssplit, pos, lemma") // , ner, parse, dcoref
 
         this.userLocations = new HashMap<>()
         this.startTimestamp = new Double(System.currentTimeMillis()/1000)
@@ -80,6 +82,9 @@ public class SlackBot extends Bot {
         this.userService = userService
         this.locationService = locationService
         this.factService = factService
+
+        def reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/stopword.txt")))
+        this.stopWords = reader.readLines()
     }
 
     @Override
@@ -101,6 +106,10 @@ public class SlackBot extends Bot {
         }
 
         User user = userService.findByUid(event.userId)
+
+        if (user.username == "explorer") {
+            return
+        }
 
         if(event.getFile() != null){
             Location location = processFile(event.getFile())
@@ -159,6 +168,10 @@ public class SlackBot extends Bot {
     private Double getSimilarity(Sentence fact, Sentence query) {
         double score = 0
         for (Word word: query.getWords()){
+            if (this.stopWords.contains(word.token)) {
+                println(word.token)
+                continue
+            }
             score += fact.wordScore(word)
         }
         return score
