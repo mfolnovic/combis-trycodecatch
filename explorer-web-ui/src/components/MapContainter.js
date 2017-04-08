@@ -1,5 +1,4 @@
 import React, {Component, PropTypes} from "react";
-import {connect} from "react-redux";
 import Map, {GoogleApiWrapper, Marker} from 'google-maps-react'
 
 class MapContainer extends Component {
@@ -8,12 +7,24 @@ class MapContainer extends Component {
       return <div>Loading...</div>
     }
 
-    let meMarker = "";
+    let markers = [];
 
     if (this.props.currentLocation) {
-      meMarker = <Marker
-        name={'You\'re here'}
-        position={this.props.currentLocation}/>
+      markers = [
+        ...markers,
+        <Marker
+          name={'You\'re here'}
+          position={this.props.currentLocation}/>
+      ]
+    }
+
+    if (this.props.locations.length > 0) {
+      markers = [
+        ...markers,
+        ...this.props.locations.map(
+          location => <Marker key={location.name} name={location.name} position={{lat: location.latitude, lng: location.longitude}}/>
+        )
+      ]
     }
 
     return (
@@ -23,14 +34,14 @@ class MapContainer extends Component {
            zoom={14}
            containerStyle={{width: '450px', height: '450px', position: 'relative'}}
            centerAroundCurrentLocation={true} >
-        {meMarker}
+        {markers}
       </Map>
     )
   }
 }
 
 MapContainer.propTypes = {
-  currentLocation: PropTypes.object.isRequired,
+  currentLocation: PropTypes.object,
   locations: PropTypes.array.isRequired
 };
 

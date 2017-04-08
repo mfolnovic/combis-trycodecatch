@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import {connect} from "react-redux";
 import {GoogleApiWrapper, Marker} from "google-maps-react";
 import {loadNearLocations} from "../actions/location";
+import LocationsWrapper from "../components/LocationsWrapper";
 
 class NearLocationsContainer extends Component {
   constructor(props) {
@@ -15,7 +16,7 @@ class NearLocationsContainer extends Component {
   }
 
   render() {
-    return <div></div>;
+    return <LocationsWrapper currentLocation={this.props.myLocation} locations={this.props.nearLocations}/>;
   }
 }
 
