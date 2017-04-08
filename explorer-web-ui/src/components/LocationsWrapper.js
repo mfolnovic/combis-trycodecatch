@@ -1,13 +1,18 @@
-import React, {Component, PropTypes} from "react";
+import React, {PropTypes} from "react";
+import MapContainer from "./MapContainter";
+import LocationList from "./LocationList";
 
-class LocationsWrapper extends Component {
-  render() {
-
-  }
+function LocationsWrapper({currentLocation, locations}) {
+  return (
+    <div>
+      <MapContainer currentLocation={currentLocation} locations={locations} />
+      <LocationList locations={locations}/>
+    </div>
+  );
 }
 
 LocationsWrapper.propTypes = {
-  currentLocation: PropTypes.object.isRequired,
+  currentLocation: PropTypes.object,
   locations: PropTypes.array.isRequired
 };
 

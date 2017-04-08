@@ -1,6 +1,8 @@
 package hr.combis.explorer.service.impl
 
+import hr.combis.explorer.dao.IFactRepository
 import hr.combis.explorer.dao.ILocationRepository
+import hr.combis.explorer.model.Fact
 import hr.combis.explorer.model.Location
 import hr.combis.explorer.service.IImageService
 import hr.combis.explorer.service.ILocationService
@@ -14,13 +16,15 @@ import java.util.stream.Collectors
 @Service
 class LocationService implements ILocationService {
   final ILocationRepository locationRepository
+  final IFactRepository factRepository
   final IImageService imageService
   final IWikipediaService wikipediaService
 
   @Autowired
-  LocationService(ILocationRepository locationRepository, IImageService imageService,
+  LocationService(ILocationRepository locationRepository, IFactRepository factRepository, IImageService imageService,
                   IWikipediaService wikipediaService) {
     this.locationRepository = locationRepository
+    this.factRepository = factRepository
     this.imageService = imageService
     this.wikipediaService = wikipediaService
   }
@@ -56,8 +60,16 @@ class LocationService implements ILocationService {
     }
 
     def summary = wikipediaService.getSummary(result.name)
-    Location forDb = new Location(result.name, summary, result.latitude, result.longitude)
 
-    return locationRepository.save(forDb)
+    def facts = wikipediaService.readFacts(result.name)
+
+    Location forDb = new Location(result.name, summary, result.latitude, result.longitude)
+    Location savedLocation = locationRepository.save(forDb)
+
+    facts.each {
+      factRepository.save(new Fact(it, savedLocation))
+    }
+
+    return savedLocation
   }
 }
