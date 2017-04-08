@@ -4,7 +4,7 @@ import {Provider} from "react-redux";
 import {createInitStore} from "./store/store";
 import NearLocationsContainer from "./containers/NearLocationsContainer";
 import MyLocationContainer from "./containers/MyLocationContainer";
-
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 let store = createInitStore();
 
@@ -12,15 +12,16 @@ class App extends Component {
   render() {
     return (
       <Provider store={store}>
-        <MyLocationContainer>
-          <div className="App">
-            <div className="App-header">
-              <h2>Explorer</h2>
+        <MuiThemeProvider>
+          <MyLocationContainer>
+            <div className="App">
+              <div className="App-header">
+                <h1>Explorer</h1>
+              </div>
+              <NearLocationsContainer />
             </div>
-            {/*<MapContainer/>*/}
-            <NearLocationsContainer />
-          </div>
-        </MyLocationContainer>
+          </MyLocationContainer>
+        </MuiThemeProvider>
       </Provider>
     );
   }
