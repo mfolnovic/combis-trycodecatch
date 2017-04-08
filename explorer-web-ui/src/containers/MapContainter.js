@@ -1,24 +1,38 @@
-import React from 'react'
+import React, {Component} from "react";
+import Map, {GoogleApiWrapper, Marker} from 'google-maps-react'
 
-import Map, {GoogleApiWrapper} from 'google-maps-react'
+class MapContainer extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      currentPosition : null
+    };
+  }
 
-const MapContainer = React.createClass({
-  onMapMoved: function(props, map) {
-    const center = map.center;
-  },
+  componentWillMount() {
+    navigator.geolocation.getCurrentPosition(this.onPositionGet);
+  }
 
-  onMapClicked: function(props) {
-    if (this.state.showingInfoWindow) {
-      this.setState({
-        showingInfoWindow: false,
-        activeMarker: null
-      })
-    }
-  },
+  onPositionGet = (position) => {
+    this.setState({
+      currentPosition : {
+        lng: position.coords.longitude,
+        lat: position.coords.latitude
+      }
+    })
+  };
 
-  render: function() {
+  render() {
     if (!this.props.loaded) {
       return <div>Loading...</div>
+    }
+
+    let meMarker = "";
+
+    if (this.state.currentPosition) {
+      meMarker = <Marker
+        name={'You\'re here'}
+        position={this.state.currentPosition}/>
     }
 
     return (
@@ -26,13 +40,13 @@ const MapContainer = React.createClass({
            className={'map'}
            style={{}}
            zoom={14}
-           containerStyle={{width: '500px', height: '500px', position: 'relative'}}
-           centerAroundCurrentLocation={true}
-           onClick={this.onMapClicked}
-           onDragend={this.onMapMoved} />
+           containerStyle={{width: '450px', height: '450px', position: 'relative'}}
+           centerAroundCurrentLocation={true} >
+        {meMarker}
+      </Map>
     )
   }
-});
+}
 
 export default GoogleApiWrapper({
   apiKey: "AIzaSyAyesbQMyKVVbBgKVi2g6VX7mop2z96jBo",
