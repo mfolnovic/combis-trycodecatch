@@ -6,6 +6,7 @@ import hr.combis.explorer.service.ISlackService
 import hr.combis.explorer.service.IUserService
 import hr.combis.explorer.service.result.SlackUser
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 
 import java.util.concurrent.locks.ReentrantLock
@@ -36,6 +37,17 @@ class UserService implements IUserService {
   }
 
   @Override
+  List<User> loadRank() {
+    return userRepository.loadRank(new PageRequest(0, 10))
+  }
+
+  @Override
+  User save(User user) {
+    user.totalScore = recalculatePoints(user)
+    return userRepository.save(user)
+  }
+
+  @Override
   void increaseUploadedPhotos(User user) {
     lock.lock()
 
@@ -47,7 +59,7 @@ class UserService implements IUserService {
     lock.unlock()
   }
 
-  private int recalculatePoints(User user) {
+  private static int recalculatePoints(User user) {
     return user.uploadedPhotos * 100
   }
 }

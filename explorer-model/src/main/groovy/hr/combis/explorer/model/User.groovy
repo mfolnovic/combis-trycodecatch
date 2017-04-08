@@ -22,8 +22,9 @@ class User {
   User() {
   }
 
-  User(String uid, String username) {
+  User(String uid, String username, int uploadedPhotos = 0) {
     this.uid = uid
     this.username = username
+    this.uploadedPhotos = uploadedPhotos
   }
 }
