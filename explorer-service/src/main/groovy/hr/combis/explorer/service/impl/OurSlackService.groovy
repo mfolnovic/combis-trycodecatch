@@ -17,7 +17,7 @@ class OurSlackService implements ISlackService {
   @Value("\${slackBotToken}")
   String slackToken
 
-  @Value("\${slackChannelToken")
+  @Value("\${slackChannelToken}")
   String slackChannelToken
 
   private def restTemplate = new RestTemplate()
