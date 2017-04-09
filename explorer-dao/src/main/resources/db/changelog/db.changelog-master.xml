@@ -98,6 +98,12 @@
 					 referencedTableName="channel"
 					 referencedColumnNames="id" />
 			</column>
+			<column name="location_id" type="BIGINT">
+				<constraints nullable="true"
+							 foreignKeyName="fk_amenity_location"
+							 referencedTableName="channel"
+							 referencedColumnNames="id" />
+			</column>
 		</createTable>
 		<dropColumn tableName="location" columnName="summary"/>
 		<dropColumn tableName="fact" columnName="location_id"/>
