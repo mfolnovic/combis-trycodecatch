@@ -16,6 +16,7 @@ import hr.combis.explorer.service.IAmenityService
 import hr.combis.explorer.service.IFactService
 import hr.combis.explorer.service.IImageService
 import hr.combis.explorer.service.ILocationService
+import hr.combis.explorer.service.ISlackService
 import hr.combis.explorer.service.IUserService
 import me.ramswaroop.jbot.core.slack.Bot
 import me.ramswaroop.jbot.core.slack.Controller
@@ -37,8 +38,6 @@ import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.socket.WebSocketSession
 
-import javax.print.Doc
-import java.time.LocalDateTime
 import java.util.regex.Matcher
 
 @Component
@@ -59,6 +58,8 @@ public class SlackBot extends Bot {
 
     private IFactService factService
 
+    private ISlackService slackService
+
     private StanfordCoreNLP pipeline
 
     private HashMap<String, Amenity> userAmenities
@@ -76,8 +77,11 @@ public class SlackBot extends Bot {
 
     private Double startTimestamp
 
+    private double rankTreshold = 1.1
+
     @Autowired
-    public SlackBot(IImageService imageService, ILocationService locationService, IUserService userService, IFactService factService, IAmenityService amenityService){
+    public SlackBot(IImageService imageService, ILocationService locationService, IUserService userService, IFactService factService,
+                    ISlackService slackService) {
         // creates a StanfordCoreNLP object, with POS tagging, lemmatization, NER, parsing, and coreference resolution
         Properties props = new Properties()
         props.setProperty("annotators", "tokenize, ssplit, pos, lemma") // , ner, parse, dcoref
@@ -90,7 +94,7 @@ public class SlackBot extends Bot {
         this.locationService = locationService
         this.factService = factService
         this.amenityService = amenityService
-
+        this.slackService = slackService
         def reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/stopword.txt")))
         this.stopWords = reader.readLines()
     }
@@ -105,6 +109,14 @@ public class SlackBot extends Bot {
         return this
     }
 
+    @Controller(events = EventType.MESSAGE, pattern = "^@([a-zA-Z]+)(.*)\$")
+    public void onMentionMessage(WebSocketSession session, Event event, Matcher matcher) {
+        String username = matcher.group(0)
+        String new_fact = matcher.group(1)
+        Amenity amenity = userAmenities.get(event.getUserId())
+        factService.save(new Fact(new_fact, amenity))
+        reply(session, event, new Message("First group: " +  + "\n"))
+    }
 
     private void processMessage(WebSocketSession session, Event event) throws IOException {
         Double eventTS = Double.parseDouble(event.getTs())
@@ -127,8 +139,7 @@ public class SlackBot extends Bot {
         } else if (event.getText() != null) {
             Amenity amenity = this.userAmenities.getOrDefault(event.getUserId(), null)
             if (amenity == null) {
-                String userId = event.getUserId()
-                reply(session, event, new Message("<@all> Can anyone answer <@"+userId+">'s question?"))
+                reply(session, event, new Message(getDontKnowMessage(user.username, event.getText())))
             } else {
                 Map<Fact, Double> rankings = new HashMap<>()
 
@@ -138,11 +149,19 @@ public class SlackBot extends Bot {
                 }
 
                 String fact = getBestFact(rankings)
+                if (rankings.get(fact) < rankTreshold){
+                    reply(session, event, new Message(getDontKnowMessage(user.username, event.getText())))
+                }else{
+                    reply(session, event, new Message(fact))
+                }
                 // vraca odgovor iz cinjenica
-                reply(session, event, new Message(fact))
             }
         }
 
+    }
+
+    String getDontKnowMessage(String username, String question) {
+        return "<!all> Can anyone answer @"+username+"'s question? \""+question+"\""
     }
 
     private String getBestFact(HashMap<Fact, Double> facts) {
@@ -177,7 +196,6 @@ public class SlackBot extends Bot {
         double score = 0
         for (Word word: query.getWords()){
             if (this.stopWords.contains(word.token)) {
-                println(word.token)
                 continue
             }
             score += fact.wordScore(word)
@@ -263,21 +281,6 @@ public class SlackBot extends Bot {
         } catch (IOException e) {
             e.printStackTrace()
         }
-    }
-    /**
-     * Invoked when bot receives an event of type message with text satisfying
-     * the pattern {@code ([a-z ]{2})(\d+)([a-z ]{2})}. For example,
-     * messages like "ab12xy" or "ab2bc" etc will invoke this method.
-     *
-     * @param session
-     * @param event
-     */
-//    @Controller(events = EventType.MESSAGE, pattern = "^([a-z ]{2})(\\d+)([a-z ]{2})$")
-    public void onReceiveMessage(WebSocketSession session, Event event, Matcher matcher) {
-        reply(session, event, new Message("First group: " + matcher.group(0) + "\n" +
-                "Second group: " + matcher.group(1) + "\n" +
-                "Third group: " + matcher.group(2) + "\n" +
-                "Fourth group: " + matcher.group(3)))
     }
 
     /**
