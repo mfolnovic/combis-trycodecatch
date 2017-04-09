@@ -40,7 +40,8 @@ class OurSlackService implements ISlackService {
 
   @Override
   SlackChannel createChannel(String name) {
-    def url = String.format(CREATE_CHANNEL_URL, slackChannelToken, name)
+    String formatedName = formatName(name)
+    def url = String.format(CREATE_CHANNEL_URL, slackChannelToken, formatedName)
     String content = restTemplate.getForObject(url, String.class)
 
     ObjectMapper mapper = new ObjectMapper()
@@ -49,7 +50,7 @@ class OurSlackService implements ISlackService {
 
     def channel = (Map)map.getOrDefault("channel", new HashMap())
     def id = (String) channel.get("id")
-    def createdName = (String) channel.getOrDefault("name", name)
+    def createdName = (String) channel.getOrDefault("name", formatedName)
 
     return new SlackChannel(id, createdName)
   }
@@ -77,6 +78,7 @@ class OurSlackService implements ISlackService {
   }
 
   private static String formatName(String name) {
-    return name.toLowerCase().replace(" ", "-").substring(0, name.length() <= 21 ? name.length() : 21)
+    def replaced = name.toLowerCase().replaceAll("[^a-zčćžšđ]+", "-")
+    return replaced.substring(0, replaced.length() <= 21 ? replaced .length() : 21)
   }
 }

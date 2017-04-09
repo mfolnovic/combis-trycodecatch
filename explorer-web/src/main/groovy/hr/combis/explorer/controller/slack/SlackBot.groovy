@@ -137,7 +137,7 @@ public class SlackBot extends Bot {
 
         if (event.getFile() != null) {
             Amenity amenity = processFile(event.getFile(), event.channelId)
-            if (amenity.channel.slackId != event.channel.id) {
+            if (amenity.channel.slackId != event.channelId) {
                 reply(session, event, new Message("You can see more about it on following channel: " +
                         "https://trycodecatch-explorer.slack.com/messages/"+amenity.channel.slackId+"/"))
             }else{

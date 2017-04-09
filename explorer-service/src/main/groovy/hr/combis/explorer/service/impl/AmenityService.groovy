@@ -71,8 +71,8 @@ class AmenityService implements IAmenityService {
 
   @Override
   Amenity findByImage(byte[] image, Location location) {
-    //ImageResult result = imageService.searchImage(image)
-    ImageResult result = new ImageResult("Ban Jelačić Square", 45.81312381458756, 15.977297)
+    ImageResult result = imageService.searchImage(image)
+//    ImageResult result = new ImageResult("Ban Jelačić Square", 45.81312381458756, 15.977297)
 
     return createAmenity(result, location)
   }

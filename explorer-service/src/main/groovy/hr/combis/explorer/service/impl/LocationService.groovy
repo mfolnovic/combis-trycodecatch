@@ -75,9 +75,9 @@ class LocationService implements ILocationService {
       return location
     }
 
-    SlackChannel slackChannel = slackService.findChannel(name.split(',')[0])
+    SlackChannel slackChannel = slackService.findChannel(result.name.split(',')[0])
     if (slackChannel == null) {
-      slackChannel = slackService.createChannel(name.split(',')[0])
+      slackChannel = slackService.createChannel(result.name.split(',')[0])
     }
     Channel channel = channelService.save(new Channel(slackChannel.id, slackChannel.name))
 

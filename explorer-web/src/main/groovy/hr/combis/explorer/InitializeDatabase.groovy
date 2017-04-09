@@ -40,7 +40,7 @@ class InitializeDatabase {
     Location split = locationService.createLocation(new ImageResult("Split, Croatia", 43.5081323, 16.4401934))
     Location zadar = locationService.createLocation(new ImageResult("Zadar, Croatia", 44.119371, 15.23136479))
     amenityService.createAmenity(new ImageResult("Ban Jelačić Square",  45.8129051, 15.9772896), zagreb)
-    amenityService.createAmenity(new ImageResult("Croatian National Theatre", 45.8096498, 15.9700533), zagreb)
+    amenityService.createAmenity(new ImageResult("Croatian National Theatre in Zagreb", 45.8096498, 15.9700533), zagreb)
     amenityService.createAmenity(new ImageResult("Diocletian's Palace", 43.508013, 16.44001007), split)
     amenityService.createAmenity(new ImageResult("Church of St. Donatus", 44.115533, 15.224513411), zadar)}
 }
