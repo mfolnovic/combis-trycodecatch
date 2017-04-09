@@ -77,7 +77,7 @@ public class SlackBot extends Bot {
     private Double startTimestamp
 
     @Autowired
-    public SlackBot(IImageService imageService, ILocationService locationService, IUserService userService, IFactService factService){
+    public SlackBot(IImageService imageService, ILocationService locationService, IUserService userService, IFactService factService, IAmenityService amenityService){
         // creates a StanfordCoreNLP object, with POS tagging, lemmatization, NER, parsing, and coreference resolution
         Properties props = new Properties()
         props.setProperty("annotators", "tokenize, ssplit, pos, lemma") // , ner, parse, dcoref
@@ -89,6 +89,7 @@ public class SlackBot extends Bot {
         this.userService = userService
         this.locationService = locationService
         this.factService = factService
+        this.amenityService = amenityService
 
         def reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/stopword.txt")))
         this.stopWords = reader.readLines()
