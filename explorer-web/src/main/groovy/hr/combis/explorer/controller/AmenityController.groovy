@@ -22,8 +22,8 @@ class AmenityController {
 
   @GetMapping
   @ResponseBody
-  List<Amenity> getInBox(@RequestParam("minLat") double minLat, @RequestParam("minLng") double minLng,
-                         @RequestParam("maxLat") double maxLat, @RequestParam("maxLng") double maxLng) {
-
+  List<Amenity> getInBox(@RequestParam("minLat") Double minLat, @RequestParam("minLng") Double minLng,
+                         @RequestParam("maxLat") Double maxLat, @RequestParam("maxLng") Double maxLng) {
+    return amenityService.findInBoundingBox(minLat, minLng, maxLat, maxLng)
   }
 }
