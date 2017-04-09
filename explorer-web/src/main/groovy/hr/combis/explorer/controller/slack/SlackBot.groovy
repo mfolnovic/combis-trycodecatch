@@ -137,9 +137,14 @@ public class SlackBot extends Bot {
 
         if (event.getFile() != null) {
             Amenity amenity = processFile(event.getFile(), event.channelId)
-            userService.increaseUploadedPhotos(user)
-            this.userAmenities.put(event.getUserId(), amenity)
-            reply(session, event, new Message(amenity.summary))
+            if (amenity.channel.slackId != event.channel.id) {
+                reply(session, event, new Message("You can see more about it on following channel: " +
+                        "https://trycodecatch-explorer.slack.com/messages/"+amenity.channel.slackId+"/"))
+            }else{
+                userService.increaseUploadedPhotos(user)
+                this.userAmenities.put(event.getUserId(), amenity)
+                reply(session, event, new Message(amenity.summary))
+            }
         } else if (event.getText() != null) {
             if (event.getText().startsWith("<@")){
                 onMentionMessage(session, event)
