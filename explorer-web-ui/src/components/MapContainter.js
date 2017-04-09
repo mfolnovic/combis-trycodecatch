@@ -1,6 +1,7 @@
 import React, {Component, PropTypes} from "react";
 import Map, {Marker} from 'google-maps-react'
 import HomeIcon from "../static/images/home_scaled.png"
+import {GoogleApiWrapper} from "google-maps-react";
 
 class MapContainer extends Component {
   render() {
@@ -29,11 +30,12 @@ class MapContainer extends Component {
         )
       ]
     }
+
     return (
       <Map google={this.props.google}
            className={'map'}
            zoom={14}
-           containerStyle={{width: '100%', height: '550px', position: 'relative'}}
+           containerStyle={{width: '100%', height: this.props.height + 'px', position: 'relative'}}
            center={this.props.center}
            centerAroundCurrentLocation={true} >
         {markers}
@@ -48,4 +50,7 @@ MapContainer.propTypes = {
   center: PropTypes.object
 };
 
-export default MapContainer;
+export default GoogleApiWrapper({
+  apiKey: "AIzaSyAyesbQMyKVVbBgKVi2g6VX7mop2z96jBo",
+  libraries: ['places', 'visualization']
+})(MapContainer);

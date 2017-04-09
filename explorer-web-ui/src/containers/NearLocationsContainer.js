@@ -15,7 +15,9 @@ class NearLocationsContainer extends Component {
   }
 
   render() {
-    return <LocationsWrapper currentLocation={this.props.myLocation} locations={this.props.nearLocations}/>;
+    return <LocationsWrapper currentLocation={this.props.myLocation}
+                             locations={this.props.nearLocations}
+                             center={this.props.centerLocation} />;
   }
 }
 
@@ -23,6 +25,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     nearLocations: state.location.near,
     myLocation: state.location.my,
+    centerLocation: state.location.center,
   }
 };
 
