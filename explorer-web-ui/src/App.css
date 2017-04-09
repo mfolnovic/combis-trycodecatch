@@ -71,5 +71,5 @@
 }
 
 .sidebar {
-    overflow: scroll;
+    overflow: auto;
 }
