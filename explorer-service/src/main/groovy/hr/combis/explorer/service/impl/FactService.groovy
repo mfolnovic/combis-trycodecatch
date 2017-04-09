@@ -1,6 +1,7 @@
 package hr.combis.explorer.service.impl
 
 import hr.combis.explorer.dao.IFactRepository
+import hr.combis.explorer.model.Amenity
 import hr.combis.explorer.model.Fact
 import hr.combis.explorer.model.Location
 import hr.combis.explorer.service.IFactService
@@ -17,8 +18,8 @@ class FactService implements IFactService {
     }
 
     @Override
-    List<Fact> findForLocation(Location location) {
-        return this.factRepository.findByLocation(location)
+    List<Fact> findForAmenity(Amenity findForAmenity) {
+        return this.factRepository.findByAmenity(findForAmenity)
     }
 
     @Override

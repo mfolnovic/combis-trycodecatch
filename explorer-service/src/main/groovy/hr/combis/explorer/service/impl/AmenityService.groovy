@@ -7,6 +7,7 @@ import hr.combis.explorer.model.Channel
 import hr.combis.explorer.model.Fact
 import hr.combis.explorer.model.Location
 import hr.combis.explorer.service.IAmenityService
+import hr.combis.explorer.service.IChannelService
 import hr.combis.explorer.service.IImageService
 import hr.combis.explorer.service.ISlackService
 import hr.combis.explorer.service.IWikipediaService
@@ -22,19 +23,21 @@ class AmenityService implements IAmenityService {
   final IFactRepository factRepository
   final IImageService imageService
   final ISlackService slackService
+  final IChannelService channelService
 
   @Autowired
   AmenityService(IAmenityRepository amenityRepository, IWikipediaService wikipediaService, IFactRepository factRepository,
-                 IImageService imageService, ISlackService slackService) {
+                 IImageService imageService, ISlackService slackService, IChannelService channelService) {
     this.amenityRepository = amenityRepository
     this.wikipediaService = wikipediaService
     this.factRepository = factRepository
     this.imageService = imageService
     this.slackService = slackService
+    this.channelService = channelService
   }
 
   @Override
-  Amenity createAmenity(ImageResult result, Location location, Channel channel = null) {
+  Amenity createAmenity(ImageResult result, Location location) {
     if (result == null) {
       return null
     }
@@ -46,7 +49,7 @@ class AmenityService implements IAmenityService {
     }
 
     SlackChannel slackChannel = slackService.createChannel(result.name)
-    channel = channelService.save(new Channel(slackChannel.id, slackChannel.name))
+    Channel channel = channelService.save(new Channel(slackChannel.id, slackChannel.name))
 
     def summary = wikipediaService.getSummary(result.name)
     def facts = wikipediaService.readFacts(result.name)

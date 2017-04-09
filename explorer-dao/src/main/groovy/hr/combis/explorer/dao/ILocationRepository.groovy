@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository
 interface ILocationRepository extends CrudRepository<Location, Long> {
   Location findByName(String name)
 
-  @Query("select l from Location l where l.channel.slack_id = ?1")
+  @Query("select l from Location l where l.channel.slackId = ?1")
   Location findByChannelId(String channelId)
 
 }
