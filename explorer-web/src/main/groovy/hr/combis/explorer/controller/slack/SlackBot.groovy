@@ -160,7 +160,7 @@ public class SlackBot extends Bot {
                 if (rankings.get(fact) < rankTreshold){
                     reply(session, event, new Message(getDontKnowMessage(user.username, event.getText())))
                 }else{
-                    reply(session, event, new Message(fact))
+                    reply(session, event, new Message(fact.sentence))
                 }
                 // vraca odgovor iz cinjenica
             }
