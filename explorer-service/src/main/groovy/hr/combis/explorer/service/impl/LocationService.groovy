@@ -55,13 +55,16 @@ class LocationService implements ILocationService {
       return location
     }
 
-    SlackChannel slackChannel = slackService.createChannel(name.split(',')[0])
+    SlackChannel slackChannel = slackService.findChannel(name.split(',')[0])
+    if (slackChannel == null) {
+      slackChannel = slackService.createChannel(name.split(',')[0])
+    }
     Channel channel = channelService.save(new Channel(slackChannel.id, slackChannel.name))
     return locationRepository.save(new Location(name, latitude, longitude, channel))
   }
 
   @Override
-  Location createLocation(ImageResult result, Channel channel = null) {
+  Location createLocation(ImageResult result) {
     if (result == null) {
       return null
     }
@@ -71,6 +74,12 @@ class LocationService implements ILocationService {
     if (location != null) {
       return location
     }
+
+    SlackChannel slackChannel = slackService.findChannel(name.split(',')[0])
+    if (slackChannel == null) {
+      slackChannel = slackService.createChannel(name.split(',')[0])
+    }
+    Channel channel = channelService.save(new Channel(slackChannel.id, slackChannel.name))
 
     Location forDb = new Location(result.name, result.latitude, result.longitude, channel)
     Location savedLocation = locationRepository.save(forDb)
