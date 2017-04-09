@@ -6,4 +6,5 @@ import hr.combis.explorer.model.Location
 interface IChannelService {
   Channel findForLocation(Location location)
   List<Channel> find
+  Channel save(Channel channel)
 }

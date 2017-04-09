@@ -3,26 +3,28 @@ package hr.combis.explorer.service.impl
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import hr.combis.explorer.service.ISlackService
+import hr.combis.explorer.service.result.SlackChannel
 import hr.combis.explorer.service.result.SlackUser
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.core.ParameterizedTypeReference
-import org.springframework.http.MediaType
-import org.springframework.http.RequestEntity
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 
 @Service
 class OurSlackService implements ISlackService {
-  final def URL_FORMAT = "https://slack.com/api/users.info?token=%s&user=%s"
+  final def FETCH_USER_URL = "https://slack.com/api/users.info?token=%s&user=%s"
+  final def CREATE_CHANNEL_URL = "https://slack.com/api/channels.create?token=%s&name=%s"
 
   @Value("\${slackBotToken}")
   String slackToken
+
+  @Value("\${slackChannelToken")
+  String slackChannelToken
 
   private def restTemplate = new RestTemplate()
 
   @Override
   SlackUser fetchUser(String id) {
-    def url = String.format(URL_FORMAT, slackToken, id)
+    def url = String.format(FETCH_USER_URL, slackToken, id)
     String content = restTemplate.getForObject(url, String.class)
 
     ObjectMapper mapper = new ObjectMapper();
@@ -33,5 +35,21 @@ class OurSlackService implements ISlackService {
     def username = (String) user.getOrDefault("name", id)
 
     return new SlackUser(id, username)
+  }
+
+  @Override
+  SlackChannel createChannel(String name) {
+    def url = String.format(CREATE_CHANNEL_URL, slackChannelToken, name)
+    String content = restTemplate.getForObject(url, String.class)
+
+    ObjectMapper mapper = new ObjectMapper()
+    Map<String, Object> map = new HashMap<String, Object>()
+    map = mapper.readValue(content, new TypeReference<Map<String, Object>>(){})
+
+    def user = (Map)map.getOrDefault("channel", new HashMap())
+    def id = (String) user.get("id")
+    def createdName = (String) user.getOrDefault("name", name)
+
+    return new SlackChannel(id, createdName)
   }
 }

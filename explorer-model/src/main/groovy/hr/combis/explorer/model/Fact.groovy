@@ -15,14 +15,14 @@ class Fact {
   @Lob
   String sentence
   @ManyToOne
-  Location location
+  Amenity amenity
 
   Fact(){
   }
 
-  Fact(String sentence, Location location) {
+  Fact(String sentence, Amenity amenity) {
     this.sentence = sentence
-    this.location = location
+    this.amenity = amenity
   }
 
   @Override
