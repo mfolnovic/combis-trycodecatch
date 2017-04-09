@@ -1,12 +1,17 @@
 import React, {PropTypes} from "react";
-import {Icon} from "react-fa";
 import {ListItem} from 'material-ui/List';
 
-function User({user}) {
+function User({rank, user}) {
+  let rightIcon = null;
+  if (rank < 3) {
+    rightIcon = <i className={'fa fa-trophy trophy-' + rank} aria-hidden="true"></i>;
+  }
+
   return (
     <ListItem
       primaryText={user.username}
       secondaryText={'Score: ' + user.total_score}
+      rightIcon={rightIcon}
     />
   );
 }

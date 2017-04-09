@@ -8,7 +8,7 @@ function LocationList({locations}) {
   locations.forEach((location, i) => {
     items.push(<Location key={location.name} location={location}/>);
     if (i + 1 < locations.length) {
-      items.push(<Divider key={i} inset={false}/>);
+      items.push(<Divider key={'div' + i} inset={false}/>);
     }
   });
   return (
