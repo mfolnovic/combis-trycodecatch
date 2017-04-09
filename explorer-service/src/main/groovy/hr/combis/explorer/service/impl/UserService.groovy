@@ -38,7 +38,7 @@ class UserService implements IUserService {
 
   @Override
   List<User> loadRank() {
-    return userRepository.loadRank(new PageRequest(0, 10))
+    return userRepository.loadRank(new PageRequest(0, 5))
   }
 
   @Override

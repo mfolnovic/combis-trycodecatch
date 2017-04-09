@@ -45,3 +45,31 @@
 .map-container {
     padding: 0;
 }
+
+.trophy-0 {
+    color: gold;
+}
+
+.trophy-1 {
+    color: silver;
+}
+
+.trophy-2 {
+    color: #cd7f32;
+}
+
+.card {
+    margin-top: 16px;
+}
+
+.card-title {
+    padding: 16px 16px 0 16px !important;
+}
+
+.card-text {
+    padding: 0 !important;
+}
+
+.sidebar {
+    overflow: scroll;
+}
