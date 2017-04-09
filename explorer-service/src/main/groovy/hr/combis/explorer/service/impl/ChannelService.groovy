@@ -23,4 +23,9 @@ class ChannelService implements IChannelService {
   Channel findForLocation(Location location) {
     return locationRepository.findOne(location.id).channel
   }
+
+  @Override
+  Channel save(Channel channel) {
+    return channelRepository.save(channel)
+  }
 }

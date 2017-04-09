@@ -8,5 +8,6 @@ interface ILocationService {
   List<Location> findAll()
   List<Location> findNearest(Double latitude, Double longitude, double threshold)
   Location createLocation(ImageResult result, Channel channel)
-  Location findByImage(byte[] image)
+  Location find(String name, Double latitude, Double longitude)
+  Location findByChannelId(String channelId)
 }

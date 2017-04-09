@@ -8,9 +8,11 @@ import edu.stanford.nlp.util.CoreMap
 import hr.combis.explorer.controller.slack.nlpUtils.Document
 import hr.combis.explorer.controller.slack.nlpUtils.Sentence
 import hr.combis.explorer.controller.slack.nlpUtils.Word
+import hr.combis.explorer.model.Amenity
 import hr.combis.explorer.model.Fact
 import hr.combis.explorer.model.Location
 import hr.combis.explorer.model.User
+import hr.combis.explorer.service.IAmenityService
 import hr.combis.explorer.service.IFactService
 import hr.combis.explorer.service.IImageService
 import hr.combis.explorer.service.ILocationService
@@ -48,13 +50,15 @@ public class SlackBot extends Bot {
 
     private ILocationService locationService
 
+    private IAmenityService amenityService
+
     private IUserService userService
 
     private IFactService factService
 
     private StanfordCoreNLP pipeline
 
-    private HashMap<String, Location> userLocations
+    private HashMap<String, Amenity> userAmenities
 
     private static final Logger logger = LoggerFactory.getLogger(SlackBot.class)
 
@@ -75,7 +79,7 @@ public class SlackBot extends Bot {
         Properties props = new Properties()
         props.setProperty("annotators", "tokenize, ssplit, pos, lemma") // , ner, parse, dcoref
 
-        this.userLocations = new HashMap<>()
+        this.userAmenities = new HashMap<>()
         this.startTimestamp = new Double(System.currentTimeMillis()/1000)
         this.pipeline = new StanfordCoreNLP(props)
         this.imageService = imageService
@@ -111,20 +115,20 @@ public class SlackBot extends Bot {
             return
         }
 
-        if(event.getFile() != null){
-            Location location = processFile(event.getFile())
+        if (event.getFile() != null) {
+            Amenity amenity = processFile(event.getFile(), event.channelId)
             userService.increaseUploadedPhotos(user)
-            this.userLocations.put(event.getUserId(), location)
-            reply(session, event, new Message(location.summary))
-        }else if(event.getText() != null) {
-            Location location = this.userLocations.getOrDefault(event.getUserId(), null)
-            if (location == null){
+            this.userAmenities.put(event.getUserId(), amenity)
+            reply(session, event, new Message(amenity.summary))
+        } else if (event.getText() != null) {
+            Amenity amenity = this.userAmenities.getOrDefault(event.getUserId(), null)
+            if (amenity == null) {
                 String userId = event.getUserId()
                 reply(session, event, new Message("<@all> Can anyone answer <@"+userId+">'s question?"))
-            }else{
+            } else {
                 Map<Fact, Double> rankings = new HashMap<>()
 
-                List<Fact> facts = factService.findForLocation(location)
+                List<Fact> facts = factService.findForAmenity(amenity)
                 for(Fact fact : facts){
                     rankings.put(fact, getRanking(fact.sentence, event.getText()))
                 }
@@ -203,8 +207,9 @@ public class SlackBot extends Bot {
         return doc
     }
 
-    private Location processFile(File file) {
+    private Amenity processFile(File file, String channelId) {
         String url = file.getUrlPrivateDownload()
+
 
         RestTemplate restTemplate = new RestTemplate()
         restTemplate.getMessageConverters().add(new ByteArrayHttpMessageConverter())
@@ -217,7 +222,9 @@ public class SlackBot extends Bot {
 
         byte[] body = response.getBody()
 
-        return locationService.findByImage(body)
+
+        Location location = locationService.findByChannelId(channelId)
+        return amenityService.findByImage(body, location)
     }
 
     /**

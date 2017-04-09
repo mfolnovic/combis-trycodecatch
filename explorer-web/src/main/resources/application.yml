@@ -11,6 +11,7 @@ spring:
 google.api.key: AIzaSyDaE7_gg2YLS5-NuSCEaSXF1CdK63EwARE
 
 rtmUrl: https://slack.com/api/rtm.start?token={token}&simple_latest&no_unreads
+slackChannelToken: xoxp-166451908419-166520010658-166628293986-41eeb2fbd1e2ee820c46e0a7efa17732
 slackBotToken: xoxb-167203214182-iPgstcmcKaT1pHtDwZR7F8AH
 slashCommandToken: X73Fv3Tokenx242CdpEq
 slackIncomingWebhookUrl: https://hooks.slack.com/services/T025DUwebhookurloOYvPiHL7y6

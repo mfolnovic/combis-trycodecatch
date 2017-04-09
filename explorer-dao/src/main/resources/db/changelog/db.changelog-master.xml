@@ -81,4 +81,33 @@
 			<column name="total_score" type="INTEGER"/>
 		</createTable>
 	</changeSet>
+	<changeSet id="201704090203-6" author="jtomic">
+		<createTable tableName="amenity">
+			<column name="id" type="BIGINT" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="name" type="VARCHAR(1024)">
+				<constraints unique="true"/>
+			</column>
+			<column name="summary" type="TEXT" />
+			<column name="latitude" type="NUMERIC(12,8)"/>
+			<column name="longitude" type="NUMERIC(12,8)"/>
+			<column name="channel_id" type="BIGINT">
+				<constraints nullable="true"
+					 foreignKeyName="fk_amenity_channel"
+					 referencedTableName="channel"
+					 referencedColumnNames="id" />
+			</column>
+		</createTable>
+		<dropColumn tableName="location" columnName="summary"/>
+		<dropColumn tableName="fact" columnName="location_id"/>
+		<addColumn tableName="fact">
+			<column name="amenity_id" type="BIGINT">
+				<constraints nullable="false"
+							 foreignKeyName="fk_fact_amenity"
+							 referencedTableName="amenity"
+							 referencedColumnNames="id" />
+			</column>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
