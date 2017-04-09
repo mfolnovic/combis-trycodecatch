@@ -3,7 +3,6 @@ package hr.combis.explorer.service
 import hr.combis.explorer.model.Amenity
 import hr.combis.explorer.model.Location
 import hr.combis.explorer.service.result.ImageResult
-import org.springframework.web.bind.annotation.RequestParam
 
 interface IAmenityService {
   List<Amenity> findAll()
