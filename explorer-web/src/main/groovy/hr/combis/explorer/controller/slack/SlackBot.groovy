@@ -44,6 +44,9 @@ public class SlackBot extends Bot {
     @Value("image-dir-path")
     private String imageDirPath
 
+    @Value("\${slack.bot.enabled}")
+    private boolean enabled
+
     private IImageService imageService
 
     private ILocationService locationService
@@ -231,6 +234,9 @@ public class SlackBot extends Bot {
      */
     @Controller(events = [EventType.DIRECT_MENTION, EventType.DIRECT_MESSAGE])
     public void onReceiveDM(WebSocketSession session, Event event) {
+        if (!enabled) {
+            return
+        }
         try {
             processMessage(session, event)
         } catch (IOException e) {
@@ -241,6 +247,9 @@ public class SlackBot extends Bot {
 
     @Controller(events = [EventType.MESSAGE])
     public void onReceiveM(WebSocketSession session, Event event) {
+        if (!enabled) {
+            return
+        }
         try {
             processMessage(session, event)
         } catch (IOException e) {
