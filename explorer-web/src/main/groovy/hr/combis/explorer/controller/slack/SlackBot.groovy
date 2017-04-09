@@ -39,6 +39,7 @@ import org.springframework.web.client.RestTemplate
 import org.springframework.web.socket.WebSocketSession
 
 import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 @Component
 public class SlackBot extends Bot {
@@ -109,13 +110,15 @@ public class SlackBot extends Bot {
         return this
     }
 
-    @Controller(events = EventType.MESSAGE, pattern = "^@([a-zA-Z]+)(.*)\$")
-    public void onMentionMessage(WebSocketSession session, Event event, Matcher matcher) {
-        String username = matcher.group(0)
-        String new_fact = matcher.group(1)
+
+    public void onMentionMessage(WebSocketSession session, Event event) {
+        String username = slackService.fetchUser(event.getUserId()).username
+        String new_fact = event.getText().substring(event.getText().indexOf('>')+1)
         Amenity amenity = userAmenities.get(event.getUserId())
-        factService.save(new Fact(new_fact, amenity))
-        reply(session, event, new Message("First group: " +  + "\n"))
+        if(amenity != null){
+            factService.save(new Fact(new_fact, amenity))
+            reply(session, event, new Message("@" + username + " Thanks! :)"))
+        }
     }
 
     private void processMessage(WebSocketSession session, Event event) throws IOException {
@@ -131,12 +134,17 @@ public class SlackBot extends Bot {
             return
         }
 
+
         if (event.getFile() != null) {
             Amenity amenity = processFile(event.getFile(), event.channelId)
             userService.increaseUploadedPhotos(user)
             this.userAmenities.put(event.getUserId(), amenity)
             reply(session, event, new Message(amenity.summary))
         } else if (event.getText() != null) {
+            if (event.getText().startsWith("<@")){
+                onMentionMessage(session, event)
+                return
+            }
             Amenity amenity = this.userAmenities.getOrDefault(event.getUserId(), null)
             if (amenity == null) {
                 reply(session, event, new Message(getDontKnowMessage(user.username, event.getText())))
@@ -148,7 +156,7 @@ public class SlackBot extends Bot {
                     rankings.put(fact, getRanking(fact.sentence, event.getText()))
                 }
 
-                String fact = getBestFact(rankings)
+                Fact fact = getBestFact(rankings)
                 if (rankings.get(fact) < rankTreshold){
                     reply(session, event, new Message(getDontKnowMessage(user.username, event.getText())))
                 }else{
@@ -161,10 +169,10 @@ public class SlackBot extends Bot {
     }
 
     String getDontKnowMessage(String username, String question) {
-        return "<!all> Can anyone answer @"+username+"'s question? \""+question+"\""
+        return "@channel Can anyone answer @"+username+" 's question? \""+question+"\""
     }
 
-    private String getBestFact(HashMap<Fact, Double> facts) {
+    private Fact getBestFact(HashMap<Fact, Double> facts) {
         Map.Entry<Fact, Double> maxEntry = null;
 
         for (Map.Entry<Fact, Double> entry : facts.entrySet()) {
@@ -172,7 +180,7 @@ public class SlackBot extends Bot {
                 maxEntry = entry
             }
         }
-        return maxEntry.getKey().sentence
+        return maxEntry.getKey()
     }
 
     private Double getRanking(String fact, String query) {

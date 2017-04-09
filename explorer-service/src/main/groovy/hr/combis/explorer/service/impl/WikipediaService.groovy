@@ -6,9 +6,6 @@ import edu.stanford.nlp.pipeline.Annotation
 import edu.stanford.nlp.pipeline.StanfordCoreNLP
 import edu.stanford.nlp.util.CoreMap
 import hr.combis.explorer.service.IWikipediaService
-import org.apache.commons.lang.StringEscapeUtils
-import org.jsoup.Jsoup
-import org.jsoup.safety.Whitelist
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 
