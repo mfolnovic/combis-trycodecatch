@@ -22,15 +22,12 @@ const styles = {
   },
   styles: {
     color: blue50,
-    width: '500px',
   },
   inputStyle: {
     color: blue50,
-    width: '500px',
   },
   hintStyle: {
     color: blue50,
-    width: '500px',
   }
 };
 
@@ -83,7 +80,7 @@ class Searchbar extends Component {
     //   />
 
     return (
-      <div>
+      <div className="searchBar">
         <ActionSearch color={blue50} />
         <TextField
           hintText="Search by name of location..."

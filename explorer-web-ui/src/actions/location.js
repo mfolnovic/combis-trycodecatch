@@ -1,20 +1,23 @@
 /*
  * action types
  */
-export const LOAD_NEAR_LOCATIONS = 'LOAD_NEAR_LOCATIONS';
-export const LOAD_NEAR_LOCATIONS_SUCCESS = 'LOAD_NEAR_LOCATIONS_SUCCESS';
+// export const LOAD_NEAR_LOCATIONS = 'LOAD_NEAR_LOCATIONS';
+// export const LOAD_NEAR_LOCATIONS_SUCCESS = 'LOAD_NEAR_LOCATIONS_SUCCESS';
+export const LOAD_LOCATION = 'LOAD_LOCATION';
+export const LOAD_LOCATION_SUCCESS = 'LOAD_LOCATION_SUCCESS';
 export const LOAD_MY_LOCATION = 'LOAD_MY_LOCATION';
 export const SET_NEW_CENTER = 'SET_NEW_CENTER';
 
 /*
  * action creators
  */
-export function loadNearLocations(lat, lng) {
-  return {type: LOAD_NEAR_LOCATIONS, lat, lng};
+export function loadLocation(name, lat, lng) {
+  return {type: LOAD_LOCATION, name, lat, lng};
 }
 
-export function loadNearLocationsSuccess(payload) {
-  return {type: LOAD_NEAR_LOCATIONS_SUCCESS, payload};
+export function loadLocationSuccess(payload) {
+  console.debug(payload);
+  return {type: LOAD_LOCATION_SUCCESS, payload};
 }
 
 export function setNewCenter(payload) {

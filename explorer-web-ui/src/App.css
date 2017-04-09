@@ -73,3 +73,8 @@
 .sidebar {
     overflow: auto;
 }
+
+.locationSlack {
+    position: relative;
+    left: -64px;
+}

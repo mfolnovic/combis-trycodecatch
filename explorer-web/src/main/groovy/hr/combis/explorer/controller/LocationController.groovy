@@ -23,10 +23,18 @@ class LocationController {
 
   @GetMapping
   @ResponseBody
-  List<Location> getNear(@RequestParam("lat") double latitude, @RequestParam("long") double longitude, @RequestParam(name = "thresh", required = false) Double threshold) {
+  List<Location> getNear(
+          @RequestParam("lat") double latitude,
+          @RequestParam("long") double longitude, @RequestParam(name = "thresh", required = false) Double threshold) {
     if (threshold == null) {
       threshold = DEFAULT_THRESHOLD
     }
     return locationService.findNearest(latitude, longitude, threshold)
+  }
+
+  @GetMapping("/name")
+  @ResponseBody
+  Location byName(@RequestParam String name, @RequestParam("lat") double latitude, @RequestParam("long") double longitude) {
+    return locationService.find(name, latitude, longitude)
   }
 }

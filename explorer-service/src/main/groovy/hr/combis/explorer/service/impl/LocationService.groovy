@@ -81,4 +81,9 @@ class LocationService implements ILocationService {
   Location findByChannelId(String channelId) {
     return locationRepository.findByChannelId(channelId)
   }
+
+  @Override
+  Location findByName(String name) {
+    return locationRepository.findByName(name)
+  }
 }

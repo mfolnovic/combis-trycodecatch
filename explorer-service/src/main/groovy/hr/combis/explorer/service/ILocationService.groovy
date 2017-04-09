@@ -10,4 +10,5 @@ interface ILocationService {
   Location createLocation(ImageResult result, Channel channel)
   Location find(String name, Double latitude, Double longitude)
   Location findByChannelId(String channelId)
+  Location findByName(String name);
 }
