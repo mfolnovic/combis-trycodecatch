@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {connect} from "react-redux";
-// import {loadNearLocations} from "../actions/location";
+import {loadNearAmenities} from "../actions/amenities";
 import LocationsWrapper from "../components/LocationsWrapper";
 
 class NearLocationsContainer extends Component {
@@ -9,8 +9,8 @@ class NearLocationsContainer extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.myLocation !== this.props.myLocation && nextProps.myLocation !== null) {
-      // this.props.dispatch(loadNearLocations(nextProps.myLocation.lat, nextProps.myLocation.lng));
+    if (nextProps.centerLocation !== this.props.centerLocation && nextProps.centerLocation !== null) {
+      this.props.dispatch(loadNearAmenities(nextProps.centerLocation.lat, nextProps.centerLocation.lng));
     }
   }
 
@@ -23,9 +23,9 @@ class NearLocationsContainer extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    nearLocations: state.location.near,
+    nearLocations: state.amenity.near || [],
     myLocation: state.location.my,
-    centerLocation: state.location.center,
+    centerLocation: state.location.center || state.location.my,
   }
 };
 
