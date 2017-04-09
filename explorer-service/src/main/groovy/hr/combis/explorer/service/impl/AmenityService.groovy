@@ -14,9 +14,11 @@ import hr.combis.explorer.service.IWikipediaService
 import hr.combis.explorer.service.result.ImageResult
 import hr.combis.explorer.service.result.SlackChannel
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
 
 import java.util.stream.Collectors
 
+@Service
 class AmenityService implements IAmenityService {
   final IAmenityRepository amenityRepository
   final IWikipediaService wikipediaService
@@ -83,6 +85,16 @@ class AmenityService implements IAmenityService {
     return amenities.stream()
       .filter({
       it -> Math.sqrt(Math.pow(it.latitude - latitude, 2) + Math.pow(it.longitude - longitude, 2)) < threshold
+    })
+      .collect(Collectors.toList())
+  }
+
+  @Override
+  List<Amenity> findInBoundingBox(Double minLat, Double minLng, Double maxLat, Double maxLng) {
+    List<Amenity> amenities = amenityRepository.findAll() as List<Amenity>
+    return amenities.stream()
+      .filter({
+      it -> it.latitude >= minLat && it.latitude <= maxLat && it.longitude >= minLng && it.longitude <= maxLng
     })
       .collect(Collectors.toList())
   }
