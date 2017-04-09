@@ -81,7 +81,7 @@ public class SlackBot extends Bot {
 
     @Autowired
     public SlackBot(IImageService imageService, ILocationService locationService, IUserService userService, IFactService factService,
-                    ISlackService slackService) {
+                    ISlackService slackService, IAmenityService amenityService) {
         // creates a StanfordCoreNLP object, with POS tagging, lemmatization, NER, parsing, and coreference resolution
         Properties props = new Properties()
         props.setProperty("annotators", "tokenize, ssplit, pos, lemma") // , ner, parse, dcoref
