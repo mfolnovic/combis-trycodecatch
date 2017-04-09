@@ -27,6 +27,6 @@ public class Sentence {
         for (Word w : this.words){
             score += w.getSimilarity(word)
         }
-        return score
+        return score // this.words.size()
     }
 }

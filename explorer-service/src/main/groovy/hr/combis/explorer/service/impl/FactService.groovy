@@ -26,4 +26,9 @@ class FactService implements IFactService {
     List<Fact> findAll() {
         return this.factRepository.findAll() as List<Fact>
     }
+
+    @Override
+    Fact save(Fact fact) {
+        return factRepository.save(fact)
+    }
 }
