@@ -50,7 +50,10 @@ class AmenityService implements IAmenityService {
       return amenity
     }
 
-    SlackChannel slackChannel = slackService.createChannel(result.name)
+    SlackChannel slackChannel = slackService.findChannel(result.name)
+    if (!slackChannel) {
+      slackChannel = slackService.createChannel(result.name)
+    }
     Channel channel = channelService.save(new Channel(slackChannel.id, slackChannel.name))
 
     def summary = wikipediaService.getSummary(result.name)
