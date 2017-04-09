@@ -113,8 +113,9 @@ public class SlackBot extends Bot {
 
     public void onMentionMessage(WebSocketSession session, Event event) {
         String username = slackService.fetchUser(event.getUserId()).username
+        String mentioned = event.getText().substring(2, event.getText().indexOf('>'))
         String new_fact = event.getText().substring(event.getText().indexOf('>')+1)
-        Amenity amenity = userAmenities.get(event.getUserId())
+        Amenity amenity = userAmenities.get(mentioned)
         if(amenity != null){
             factService.save(new Fact(new_fact, amenity))
             reply(session, event, new Message("@" + username + " Thanks! :)"))
@@ -139,7 +140,7 @@ public class SlackBot extends Bot {
             Amenity amenity = processFile(event.getFile(), event.channelId)
             if (amenity.channel.slackId != event.channelId) {
                 reply(session, event, new Message("You can see more about it on following channel: " +
-                        "https://trycodecatch-explorer.slack.com/messages/"+amenity.channel.slackId+"/"))
+                        "https://trycodecatch-explorer.slack.com/messages/"+amenity.channel.name +"/"))
             }else{
                 userService.increaseUploadedPhotos(user)
                 this.userAmenities.put(event.getUserId(), amenity)

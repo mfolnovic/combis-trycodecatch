@@ -8,6 +8,8 @@ import org.springframework.data.repository.CrudRepository
 interface IUserRepository extends CrudRepository<User, Long> {
   User findByUid(String uid)
 
+  User findByUsername(String username)
+
   @Query("select u from User u order by u.totalScore desc")
   List<User> loadRank(Pageable pageable)
 }

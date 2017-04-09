@@ -17,17 +17,19 @@ RUN cd /build && mvn clean compile
 COPY explorer-web-ui /build/explorer-web-ui
 RUN cd /build/explorer-web-ui && npm install && npm run build && cd /build
 
-RUN mkdir -p /build/explorer-web/target/classes/static/css
-RUN mkdir -p /build/explorer-web/target/classes/static/favicons
-RUN mkdir -p /build/explorer-web/target/classes/static/js
-RUN mkdir -p /build/explorer-web/target/classes/static/media
+RUN mkdir -p /build/explorer-web/target/classes/static/static/css
+RUN mkdir -p /build/explorer-web/target/classes/static/static/favicons
+RUN mkdir -p /build/explorer-web/target/classes/static/static/js
+RUN mkdir -p /build/explorer-web/target/classes/static/static/media
 
-RUN cp -r /build/explorer-web-ui/build/static/css /build/explorer-web/target/classes/static/css
-RUN cp -r /build/explorer-web-ui/build/favicon.ico /build/explorer-web/target/classes/static/favicons/favicon.ico
-RUN cp -r /build/explorer-web-ui/build/static/js /build/explorer-web/target/classes/static/js
-RUN cp -r /build/explorer-web-ui/build/static/media /build/explorer-web/target/classes/static/media
+RUN cp -r /build/explorer-web-ui/build/static/css /build/explorer-web/target/classes/static/static/
+RUN cp -r /build/explorer-web-ui/build/favicon.ico /build/explorer-web/target/classes/static/static/favicons/favicon.ico
+RUN cp -r /build/explorer-web-ui/build/static/js /build/explorer-web/target/classes/static/static/
+RUN cp -r /build/explorer-web-ui/build/static/media /build/explorer-web/target/classes/static/static/
 
 RUN cp /build/explorer-web-ui/build/index.html /build/explorer-web/target/classes/templates/index.html
+
+RUN ls -alhR /build/explorer-web/target/classes/static
 
 RUN cd /build && mvn package && cd /build
 

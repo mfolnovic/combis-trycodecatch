@@ -37,6 +37,11 @@ class UserService implements IUserService {
   }
 
   @Override
+  User findByUsername(String username) {
+    return userRepository.findByUsername(username)
+  }
+
+  @Override
   List<User> loadRank() {
     return userRepository.loadRank(new PageRequest(0, 5))
   }
